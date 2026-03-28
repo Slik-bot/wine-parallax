@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Getap Winery — Магазин</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --bg: #0e0a06;
+      --gold: #c9a227;
+      --gold-dim: rgba(201,162,39,0.3);
+      --cream: #f5ede0;
+      --muted: rgba(245,237,224,0.45);
+      --glass-bg: rgba(15,10,5,0.55);
+      --glass-border: rgba(201,162,39,0.18);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      background: var(--bg);
+      color: var(--cream);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      overflow-x: hidden;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      position: fixed; top:0; left:0; right:0; z-index:50;
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 1.4rem 4rem;
+      background: linear-gradient(to bottom, rgba(14,10,6,0.95) 0%, transparent 100%);
+      backdrop-filter: blur(8px);
+    }
+    .header__nav { display:flex; align-items:center; gap:2.5rem; }
+    .header__link {
+      font-family:'Montserrat',sans-serif; font-weight:300;
+      font-size:0.65rem; letter-spacing:0.25em;
+      color:var(--muted); text-decoration:none;
+      transition:color 0.3s;
+    }
+    .header__link:hover { color:var(--gold); }
+    .header__cart {
+      position:relative; background:none; border:none;
+      cursor:pointer; padding:4px;
+    }
+    .cart-count {
+      position:absolute; top:-6px; right:-6px;
+      width:16px; height:16px; border-radius:50%;
+      background:var(--gold); color:#0e0a06;
+      font-family:'Montserrat',sans-serif;
+      font-size:0.55rem; display:flex;
+      align-items:center; justify-content:center;
+    }
+
+    /* ── HERO ── */
+    .shop-hero {
+      position:relative; height:100vh;
+      display:flex; align-items:center; justify-content:center;
+      overflow:hidden;
+    }
+    .shop-hero__bg-wrap {
+      position:absolute; inset:0; overflow:hidden;
+    }
+    .shop-hero__bg {
+      width:100%; height:120%;
+      object-fit:cover; object-position:center;
+      will-change:transform;
+    }
+    .shop-hero__overlay {
+      position:absolute; inset:0;
+      background: linear-gradient(to bottom,
+        rgba(14,10,6,0.3) 0%,
+        rgba(14,10,6,0.5) 60%,
+        rgba(14,10,6,1) 100%);
+    }
+    .shop-hero__content {
+      position:relative; z-index:2;
+      text-align:center; max-width:600px;
+    }
+    .shop-hero__eyebrow {
+      display:block; font-family:'Montserrat',sans-serif;
+      font-weight:300; font-size:0.6rem;
+      letter-spacing:0.45em; color:var(--gold);
+      margin-bottom:1.2rem; opacity:0.85;
+    }
+    .shop-hero__title {
+      font-size:clamp(3.5rem,8vw,7rem);
+      font-weight:300; line-height:1;
+      letter-spacing:0.06em;
+    }
+    .shop-hero__divider {
+      width:50px; height:1px;
+      background:var(--gold); margin:1.5rem auto;
+    }
+    .shop-hero__sub {
+      font-family:'Montserrat',sans-serif; font-weight:300;
+      font-size:0.62rem; letter-spacing:0.28em;
+      color:var(--muted); margin-bottom:2rem;
+    }
+    .shop-hero__cta {
+      display:inline-block;
+      font-family:'Montserrat',sans-serif; font-weight:300;
+      font-size:0.62rem; letter-spacing:0.28em;
+      border:1px solid var(--gold); color:var(--gold);
+      padding:14px 40px; text-decoration:none;
+      transition:all 0.3s;
+    }
+    .shop-hero__cta:hover { background:var(--gold); color:#0e0a06; }
+
+    /* ── CATALOG ── */
+    .catalog {
+      position: relative;
+      padding: 6rem 4rem;
+      min-height: 100vh;
+    }
+    .catalog__cellar-bg {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: -1;
+    }
+    .catalog__cellar-img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+      filter: brightness(0.35);
+    }
+    .catalog__cellar-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom,
+        rgba(14,10,6,0.8) 0%,
+        rgba(14,10,6,0.4) 50%,
+        rgba(14,10,6,0.8) 100%);
+    }
+    .catalog__inner { position: relative; z-index: 1; }
+    .catalog__header { text-align:center; margin-bottom:3rem; }
+    .catalog__eyebrow {
+      font-family:'Montserrat',sans-serif; font-weight:300;
+      font-size:0.6rem; letter-spacing:0.45em;
+      color:var(--gold); display:block; margin-bottom:1rem;
+    }
+    .catalog__title {
+      font-size:clamp(2rem,4vw,3.5rem);
+      font-weight:300; letter-spacing:0.08em;
+    }
+    .catalog__divider {
+      width:50px; height:1px;
+      background:var(--gold); margin:1.2rem auto 0;
+    }
+    .catalog__filters {
+      display:flex; justify-content:center;
+      gap:1rem; margin-bottom:3rem;
+      flex-wrap:wrap;
+    }
+    .filter-btn {
+      font-family:'Montserrat',sans-serif; font-weight:300;
+      font-size:0.6rem; letter-spacing:0.25em;
+      background:none; border:1px solid transparent;
+      color:var(--muted); cursor:pointer;
+      padding:8px 20px; transition:all 0.3s;
+    }
+    .filter-btn:hover,
+    .filter-btn.is-active {
+      border-color:var(--gold-dim);
+      color:var(--gold);
+    }
+    .catalog__grid {
+      display:grid;
+      grid-template-columns: repeat(3,1fr);
+      gap:1.5rem;
+      max-width:1300px; margin:0 auto;
+    }
+
+    /* ── WINE CARD ── */
+    .wine-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      transition: border-color 0.4s, transform 0.4s;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    .wine-card.is-visible {
+      opacity:1; transform:translateY(0);
+    }
+    .wine-card:hover {
+      border-color: rgba(201,162,39,0.45);
+      transform: translateY(-6px);
+    }
+    .wine-card__img-wrap {
+      position:relative; height:260px;
+      display:flex; align-items:flex-end;
+      justify-content:center; padding-bottom:1rem;
+      background: linear-gradient(to bottom,
+        rgba(201,162,39,0.04),
+        rgba(201,162,39,0.1));
+      overflow:hidden;
+    }
+    .wine-card__img {
+      height:220px; width:auto;
+      object-fit:contain;
+      transition:transform 0.5s ease;
+      filter: drop-shadow(0 10px 30px rgba(0,0,0,0.6));
+    }
+    .wine-card:hover .wine-card__img {
+      transform:translateY(-10px) scale(1.04);
+    }
+    .wine-card__badge {
+      position:absolute; top:1rem; left:1rem;
+      font-family:'Montserrat',sans-serif;
+      font-size:0.52rem; letter-spacing:0.18em;
+      color:#0e0a06; background:var(--gold);
+      padding:4px 10px;
+    }
+    .wine-card__body { padding:1.5rem; }
+    .wine-card__region {
+      font-family:'Montserrat',sans-serif;
+      font-size:0.55rem; letter-spacing:0.22em;
+      color:var(--muted); display:block;
+      margin-bottom:0.5rem;
+    }
+    .wine-card__name {
+      font-size:clamp(1.2rem,1.8vw,1.6rem);
+      font-weight:300; line-height:1.2;
+      letter-spacing:0.04em;
+    }
+    .wine-card__divider {
+      width:25px; height:1px;
+      background:var(--gold); margin:0.8rem 0;
+    }
+    .wine-card__desc {
+      font-size:0.85rem;
+      color:var(--muted); line-height:1.7;
+      margin-bottom:0.5rem;
+    }
+    .wine-card__stars {
+      color:var(--gold); font-size:0.7rem;
+      letter-spacing:0.12em; margin-bottom:1rem;
+    }
+    .wine-card__footer {
+      display:flex; align-items:center;
+      justify-content:space-between;
+      padding-top:1rem;
+      border-top:1px solid var(--glass-border);
+    }
+    .wine-card__price {
+      font-size:clamp(1rem,1.6vw,1.3rem);
+      font-weight:300; letter-spacing:0.05em;
+    }
+    .wine-card__btn {
+      font-family:'Montserrat',sans-serif;
+      font-size:0.55rem; letter-spacing:0.2em;
+      border:1px solid var(--gold-dim);
+      color:var(--gold); background:transparent;
+      padding:8px 16px; cursor:pointer;
+      transition:all 0.3s;
+    }
+    .wine-card__btn:hover {
+      background:var(--gold); color:#0e0a06;
+      border-color:var(--gold);
+    }
+
+    /* ── CART ── */
+    .cart {
+      position:fixed; top:0; right:0; bottom:0;
+      width:380px; z-index:200;
+      background: rgba(14,10,6,0.96);
+      backdrop-filter:blur(20px);
+      border-left:1px solid var(--glass-border);
+      display:flex; flex-direction:column;
+      padding:2rem;
+      transform:translateX(100%);
+      transition:transform 0.45s cubic-bezier(0.4,0,0.2,1);
+    }
+    .cart.is-open { transform:translateX(0); }
+    .cart__overlay {
+      position:fixed; inset:0; z-index:199;
+      background:rgba(0,0,0,0.6);
+      opacity:0; pointer-events:none;
+      transition:opacity 0.4s;
+    }
+    .cart__overlay.is-open { opacity:1; pointer-events:all; }
+    .cart__header {
+      display:flex; align-items:center;
+      justify-content:space-between;
+      padding-bottom:1.5rem;
+      border-bottom:1px solid var(--glass-border);
+      margin-bottom:1.5rem;
+    }
+    .cart__title {
+      font-size:1.4rem; font-weight:300;
+      letter-spacing:0.1em;
+    }
+    .cart__close {
+      background:none; border:none;
+      color:var(--muted); cursor:pointer;
+      transition:color 0.3s;
+    }
+    .cart__close:hover { color:var(--cream); }
+    .cart__items { flex:1; overflow-y:auto; }
+    .cart__empty {
+      font-family:'Montserrat',sans-serif;
+      font-size:0.65rem; letter-spacing:0.15em;
+      color:var(--muted); text-align:center;
+      margin-top:4rem;
+    }
+    .cart-item {
+      display:flex; align-items:center;
+      justify-content:space-between;
+      padding:1rem 0;
+      border-bottom:1px solid var(--glass-border);
+    }
+    .cart-item__info { flex:1; }
+    .cart-item__name {
+      font-size:0.9rem; font-weight:300;
+      letter-spacing:0.03em; margin-bottom:0.2rem;
+    }
+    .cart-item__price {
+      font-family:'Montserrat',sans-serif;
+      font-size:0.62rem; color:var(--gold);
+      letter-spacing:0.1em;
+    }
+    .cart-item__remove {
+      background:none; border:none;
+      color:var(--muted); cursor:pointer;
+      font-size:1.1rem; padding:0 0.4rem;
+      transition:color 0.3s;
+    }
+    .cart-item__remove:hover { color:var(--cream); }
+    .cart__footer {
+      padding-top:1.5rem;
+      border-top:1px solid var(--glass-border);
+    }
+    .cart__total {
+      display:flex; justify-content:space-between;
+      align-items:baseline; margin-bottom:1.5rem;
+    }
+    .cart__total-label {
+      font-family:'Montserrat',sans-serif;
+      font-size:0.62rem; letter-spacing:0.25em;
+      color:var(--muted);
+    }
+    .cart__total-price {
+      font-size:1.4rem; font-weight:300;
+      letter-spacing:0.05em;
+    }
+    .cart__checkout {
+      width:100%;
+      font-family:'Montserrat',sans-serif;
+      font-weight:300; font-size:0.62rem;
+      letter-spacing:0.28em;
+      border:1px solid var(--gold);
+      color:var(--gold); background:transparent;
+      padding:14px; cursor:pointer;
+      transition:all 0.3s;
+    }
+    .cart__checkout:hover {
+      background:var(--gold); color:#0e0a06;
+    }
+
+    /* ── FOOTER ── */
+    .shop-footer {
+      padding:3rem 4rem;
+      border-top:1px solid var(--glass-border);
+      text-align:center;
+    }
+    .shop-footer__brand {
+      font-family:'Montserrat',sans-serif;
+      font-size:0.7rem; letter-spacing:0.4em;
+      color:var(--gold); margin-bottom:0.5rem;
+    }
+    .shop-footer__copy {
+      font-family:'Montserrat',sans-serif;
+      font-size:0.58rem; letter-spacing:0.2em;
+      color:var(--muted); margin-bottom:1rem;
+    }
+    .shop-footer__back {
+      font-family:'Montserrat',sans-serif;
+      font-size:0.58rem; letter-spacing:0.2em;
+      color:var(--muted); text-decoration:none;
+      transition:color 0.3s;
+    }
+    .shop-footer__back:hover { color:var(--gold); }
+
+    /* ── PRODUCT MODAL ── */
+    .product-modal {
+      position: fixed; inset: 0; z-index: 300;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.4s;
+    }
+    .product-modal.is-open {
+      opacity: 1; pointer-events: all;
+    }
+    .product-modal__overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(6px);
+    }
+    .product-modal__panel {
+      position: relative; z-index: 1;
+      display: flex; gap: 3rem;
+      background: rgba(20, 12, 4, 0.75);
+      border-radius: 28px;
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      padding: 3rem;
+      max-width: 880px; width: 90%;
+      max-height: 90vh; overflow-y: auto;
+      transform: translateY(20px) scale(0.98);
+      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow:
+        0 0 0 1px rgba(201,162,39,0.2),
+        0 40px 100px rgba(0,0,0,0.7),
+        inset 0 1px 0 rgba(201,162,39,0.12),
+        inset 0 -1px 0 rgba(0,0,0,0.3);
+    }
+    .product-modal__panel::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(201,162,39,0.04) 0%,
+        rgba(80,30,10,0.08) 50%,
+        rgba(0,0,0,0) 100%
+      );
+      border-radius: 28px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .product-modal__panel > * {
+      position: relative;
+      z-index: 1;
+    }
+    .checkout-modal.is-open .checkout-modal__panel,
+    .product-modal.is-open .product-modal__panel {
+      transform: translateY(0) scale(1);
+    }
+    .product-modal__close {
+      position: absolute; top: 1.5rem; right: 1.5rem;
+      background: none; border: none;
+      color: var(--muted); cursor: pointer;
+      transition: color 0.3s;
+    }
+    .product-modal__close:hover { color: var(--cream); }
+    .product-modal__img-wrap {
+      flex-shrink: 0; width: 260px;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(to bottom, rgba(201,162,39,0.04), rgba(201,162,39,0.1));
+      padding: 2rem;
+    }
+    .product-modal__img {
+      height: 320px; width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 15px 40px rgba(0,0,0,0.7));
+    }
+    .product-modal__info { flex: 1; }
+    .product-modal__region {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.58rem; letter-spacing: 0.28em;
+      color: var(--muted); margin-bottom: 0.6rem;
+    }
+    .product-modal__name {
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      font-weight: 300; line-height: 1.15;
+      letter-spacing: 0.04em; margin-bottom: 0.5rem;
+    }
+    .product-modal__divider {
+      width: 35px; height: 1px;
+      background: var(--gold); margin: 1rem 0;
+    }
+    .product-modal__stars {
+      color: var(--gold); font-size: 0.8rem;
+      letter-spacing: 0.15em; margin-bottom: 1rem;
+    }
+    .product-modal__desc {
+      font-size: 0.95rem; line-height: 1.9;
+      color: rgba(245,237,224,0.75);
+      margin-bottom: 1.5rem;
+    }
+    .product-modal__details {
+      display: flex; gap: 2rem;
+      padding: 1.2rem 0;
+      border-top: 1px solid var(--glass-border);
+      border-bottom: 1px solid var(--glass-border);
+      margin-bottom: 1.5rem;
+    }
+    .product-modal__detail {
+      display: flex; flex-direction: column; gap: 0.3rem;
+    }
+    .product-modal__detail-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.52rem; letter-spacing: 0.22em;
+      color: var(--muted);
+    }
+    .product-modal__detail-val {
+      font-size: 0.88rem; letter-spacing: 0.03em;
+    }
+    .product-modal__footer {
+      display: flex; align-items: center; gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .product-modal__price {
+      font-size: 1.6rem; font-weight: 300;
+      letter-spacing: 0.05em;
+    }
+    .product-modal__qty {
+      display: flex; align-items: center; gap: 1rem;
+      border: 1px solid rgba(201,162,39,0.2);
+      border-radius: 12px;
+      padding: 8px 16px;
+      background: rgba(201,162,39,0.03);
+    }
+    .qty-btn {
+      background: none; border: none;
+      color: var(--gold); cursor: pointer;
+      font-size: 1.1rem; width: 24px;
+      transition: color 0.3s;
+    }
+    .qty-btn:hover { color: var(--cream); }
+    .qty-val {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.8rem; letter-spacing: 0.1em;
+      min-width: 20px; text-align: center;
+    }
+    .product-modal__add {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.6rem; letter-spacing: 0.25em;
+      border: 1px solid rgba(201,162,39,0.6);
+      color: var(--gold);
+      background: rgba(201,162,39,0.06);
+      padding: 12px 28px; cursor: pointer;
+      border-radius: 12px;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 0 20px rgba(201,162,39,0.08);
+    }
+    .product-modal__add:hover {
+      background: var(--gold); color: #0e0a06;
+      box-shadow: 0 0 40px rgba(201,162,39,0.35);
+      transform: translateY(-1px);
+    }
+
+    /* ── CHECKOUT MODAL ── */
+    .checkout-modal {
+      position: fixed; inset: 0; z-index: 400;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.4s;
+    }
+    .checkout-modal.is-open { opacity: 1; pointer-events: all; }
+    .checkout-modal__overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.82);
+      backdrop-filter: blur(10px);
+    }
+    .checkout-modal__panel {
+      position: relative; z-index: 1;
+      background: rgba(20, 12, 4, 0.75);
+      border: 1px solid transparent;
+      background-clip: padding-box;
+      border-radius: 24px;
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      padding: 2.5rem;
+      width: 90%; max-width: 520px;
+      max-height: 90vh; overflow-y: auto;
+      transform: translateY(24px);
+      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow:
+        0 0 0 1px rgba(201,162,39,0.25),
+        0 30px 80px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(201,162,39,0.15),
+        inset 0 -1px 0 rgba(0,0,0,0.3),
+        0 0 80px rgba(120,40,10,0.15) inset;
+    }
+    .checkout-modal__panel::before {
+      content: '';
+      position: absolute;
+      top: 0; right: -60px; bottom: 0;
+      width: 280px;
+      background: url('img/barrel-hero.png') center/cover no-repeat;
+      opacity: 0.06;
+      border-radius: 0 24px 24px 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .checkout-modal__panel::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(201,162,39,0.04) 0%,
+        rgba(80,30,10,0.08) 50%,
+        rgba(0,0,0,0) 100%
+      );
+      border-radius: 24px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .checkout-modal__panel > * {
+      position: relative;
+      z-index: 1;
+    }
+    .checkout-modal.is-open .checkout-modal__panel { transform: translateY(0); }
+    .checkout-modal__close {
+      position: absolute; top: 1.5rem; right: 1.5rem;
+      background: none; border: none;
+      color: rgba(245,237,224,0.4); cursor: pointer;
+      transition: color 0.3s;
+    }
+    .checkout-modal__close:hover { color: var(--cream); }
+    .checkout-steps {
+      display: flex; align-items: center;
+      margin-bottom: 2rem;
+    }
+    .checkout-step {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 4px;
+    }
+    .checkout-step__num {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1px solid rgba(201,162,39,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.52rem; letter-spacing: 0.1em;
+      color: rgba(245,237,224,0.25);
+      transition: all 0.4s;
+      background: rgba(201,162,39,0.03);
+    }
+    .checkout-step__label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.5rem; letter-spacing: 0.2em;
+      color: rgba(245,237,224,0.3);
+      transition: color 0.4s;
+    }
+    .checkout-step.is-active .checkout-step__num {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(201,162,39,0.1);
+      box-shadow: 0 0 16px rgba(201,162,39,0.2);
+    }
+    .checkout-step.is-active .checkout-step__label { color: var(--gold); }
+    .checkout-step.is-done .checkout-step__num {
+      border-color: var(--gold);
+      background: var(--gold);
+      color: #0e0a06;
+      box-shadow: 0 0 20px rgba(201,162,39,0.3);
+    }
+    .checkout-step.is-done .checkout-step__label { color: var(--muted); }
+    .checkout-step__line {
+      flex: 1; height: 1px;
+      background: rgba(201,162,39,0.15);
+      margin: 0 0.5rem; margin-bottom: 1rem;
+    }
+    .checkout-modal__eyebrow {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.52rem; letter-spacing: 0.4em;
+      color: var(--gold); margin-bottom: 0.6rem; opacity: 0.8;
+    }
+    .checkout-modal__title {
+      font-size: 1.6rem; font-weight: 300; letter-spacing: 0.06em;
+    }
+    .checkout-modal__divider {
+      width: 30px; height: 1px;
+      background: var(--gold); margin: 0.8rem 0 1.5rem;
+    }
+    .checkout-fields { display: flex; flex-direction: column; gap: 0.8rem; }
+    .checkout-fields--row { display: flex; gap: 0.8rem; }
+    .checkout-fields--row .checkout-field { flex: 1; }
+    .checkout-field { display: flex; flex-direction: column; gap: 0.3rem; }
+    .checkout-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.52rem; letter-spacing: 0.22em; color: var(--muted);
+    }
+    .checkout-input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(201,162,39,0.2);
+      border-radius: 0;
+      color: var(--cream);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1rem; padding: 10px 0;
+      transition: border-color 0.3s; width: 100%;
+    }
+    .checkout-input:focus {
+      outline: none;
+      border-bottom-color: rgba(201,162,39,0.7);
+      box-shadow: 0 1px 0 rgba(201,162,39,0.3);
+    }
+    .checkout-input::placeholder { color: rgba(245,237,224,0.2); }
+    .checkout-order-summary {
+      margin: 1.2rem 0 0.5rem;
+      border-top: 1px solid rgba(201,162,39,0.12);
+      padding-top: 1rem;
+    }
+    .summary-item {
+      display: flex; justify-content: space-between;
+      padding: 0.4rem 0; font-size: 0.85rem; color: var(--muted);
+    }
+    .summary-item span:last-child { color: var(--cream); }
+    .checkout-payment { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.2rem; }
+    .payment-option { cursor: pointer; }
+    .payment-option input { display: none; }
+    .payment-option__box {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border: 1px solid rgba(201,162,39,0.15);
+      border-radius: 12px;
+      transition: all 0.3s;
+      background: rgba(201,162,39,0.02);
+    }
+    .payment-option input:checked + .payment-option__box {
+      border-color: rgba(201,162,39,0.5);
+      background: rgba(201,162,39,0.06);
+      box-shadow: 0 0 20px rgba(201,162,39,0.08);
+    }
+    .payment-option__name { font-size: 0.9rem; letter-spacing: 0.03em; }
+    .payment-option__logos { display: flex; gap: 0.4rem; }
+    .payment-logo {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.48rem; letter-spacing: 0.1em;
+      color: var(--muted); border: 1px solid rgba(201,162,39,0.2);
+      padding: 2px 6px;
+    }
+    .checkout-secure {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.52rem; letter-spacing: 0.15em;
+      color: var(--muted); margin: 1rem 0;
+    }
+    .checkout-total-row {
+      display: flex; justify-content: space-between;
+      align-items: baseline;
+      padding: 1rem 0;
+      border-top: 1px solid rgba(201,162,39,0.12);
+      border-bottom: 1px solid rgba(201,162,39,0.12);
+      margin: 1rem 0 1.2rem;
+    }
+    .checkout-total-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.55rem; letter-spacing: 0.25em; color: var(--muted);
+    }
+    .checkout-total-sum { font-size: 1.5rem; font-weight: 300; letter-spacing: 0.05em; }
+    .checkout-btns { display: flex; gap: 0.8rem; }
+    .checkout-back {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.58rem; letter-spacing: 0.2em;
+      background: none;
+      border: 1px solid rgba(201,162,39,0.15);
+      border-radius: 12px;
+      color: var(--muted); padding: 12px 20px; cursor: pointer;
+      transition: all 0.3s;
+    }
+    .checkout-back:hover {
+      border-color: rgba(201,162,39,0.4);
+      color: var(--gold);
+    }
+    .checkout-pay {
+      flex: 1;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.6rem; letter-spacing: 0.28em;
+      border: 1px solid rgba(201,162,39,0.6);
+      color: var(--gold); background: rgba(201,162,39,0.06);
+      padding: 14px; cursor: pointer;
+      border-radius: 12px;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      width: 100%;
+      box-shadow: 0 0 20px rgba(201,162,39,0.08);
+    }
+    .checkout-pay:hover {
+      background: var(--gold); color: #0e0a06;
+      box-shadow: 0 0 40px rgba(201,162,39,0.35);
+      transform: translateY(-1px);
+    }
+    .checkout-success { text-align: center; padding: 2rem 0; }
+    .checkout-success__circle {
+      width: 72px; height: 72px; border-radius: 50%;
+      border: 1px solid rgba(201,162,39,0.4);
+      background: rgba(201,162,39,0.08);
+      box-shadow: 0 0 40px rgba(201,162,39,0.2);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+    .checkout-success__title {
+      font-size: 1.8rem; font-weight: 300; letter-spacing: 0.06em;
+      margin-bottom: 0.5rem;
+    }
+    .checkout-success__text {
+      font-size: 0.9rem; line-height: 2;
+      color: var(--muted); margin-bottom: 1rem;
+    }
+    .checkout-success__order {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.58rem; letter-spacing: 0.2em;
+      color: var(--gold); margin-bottom: 0.5rem;
+    }
+    .checkout-success__brand {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.52rem; letter-spacing: 0.35em; color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <a class="header__logo" href="index.html">
+      <svg width="140" height="44" viewBox="0 0 140 44" fill="none">
+        <path d="M16 6 Q14 6 13 8 Q11 10 12 13 Q10 13 9 15 Q8 18 10 20 Q11 28 14 33 Q16 37 20 38 Q24 37 26 33 Q29 28 30 20 Q32 18 31 15 Q30 13 28 13 Q29 10 27 8 Q26 6 24 6 Z" stroke="#c9a227" stroke-width="1.1" fill="none"/>
+        <line x1="16" y1="6" x2="24" y2="6" stroke="#c9a227" stroke-width="1.1"/>
+        <line x1="15" y1="4" x2="25" y2="4" stroke="#c9a227" stroke-width="1.1"/>
+        <path d="M12 13 Q7 14 7 19 Q7 24 12 24" stroke="#c9a227" stroke-width="1.1" fill="none"/>
+        <path d="M28 13 Q33 14 33 19 Q33 24 28 24" stroke="#c9a227" stroke-width="1.1" fill="none"/>
+        <text x="44" y="24" font-family="Georgia,serif" font-size="17" fill="#f5ede0" letter-spacing="4">GETAP</text>
+        <text x="44" y="34" font-family="Georgia,serif" font-size="7" fill="#c9a227" letter-spacing="5">WINERY</text>
+      </svg>
+    </a>
+    <nav class="header__nav">
+      <a class="header__link" href="index.html">← Назад</a>
+      <a class="header__link" href="#catalog">Каталог</a>
+      <a class="header__link" href="#about-cellar">Погреб</a>
+      <button class="header__cart" id="cart-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c9a227" stroke-width="1.5">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        <span class="cart-count">0</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="shop-hero">
+    <div class="shop-hero__bg-wrap">
+      <img class="shop-hero__bg" src="img/barrel-hero.png" alt="">
+    </div>
+    <div class="shop-hero__overlay"></div>
+    <div class="shop-hero__content">
+      <span class="shop-hero__eyebrow">GETAP WINERY · ГЕЛЕНДЖИК · 2024</span>
+      <h1 class="shop-hero__title">Авторская<br>Коллекция</h1>
+      <div class="shop-hero__divider"></div>
+      <p class="shop-hero__sub">Лимитированный тираж · Ручной сбор · Прямые поставки</p>
+      <a class="shop-hero__cta" href="#catalog">Смотреть коллекцию</a>
+    </div>
+  </section>
+
+  <!-- CATALOG -->
+  <section class="catalog" id="catalog">
+    <div class="catalog__cellar-bg">
+      <img class="catalog__cellar-img" src="img/cellar-bg.png" alt="">
+      <div class="catalog__cellar-overlay"></div>
+    </div>
+
+    <div class="catalog__inner">
+      <div class="catalog__header">
+        <span class="catalog__eyebrow">GETAP WINERY · КОЛЛЕКЦИЯ 2024</span>
+        <h2 class="catalog__title">Наши вина</h2>
+        <div class="catalog__divider"></div>
+      </div>
+
+      <div class="catalog__filters">
+        <button class="filter-btn is-active" data-filter="all">Все</button>
+        <button class="filter-btn" data-filter="red">Красные</button>
+        <button class="filter-btn" data-filter="white">Белые</button>
+        <button class="filter-btn" data-filter="rose">Розовые</button>
+        <button class="filter-btn" data-filter="reserve">Резерв</button>
+      </div>
+
+      <div class="catalog__grid">
+
+        <article class="wine-card" data-category="red reserve" data-full-desc="Флагман коллекции Getap. Каберне Совиньон с виноградников на высоте 400 метров. 18 месяцев выдержки в новых французских бочках из дуба Аллье. Бархатистый танин, богатый букет тёмной вишни, табака и восточных специй. Идеален к выдержанным сырам и красному мясу. Подавать при 17–18°C.">
+          <div class="wine-card__img-wrap">
+            <img class="wine-card__img" src="img/bottle1.png" alt="Getap Noir Reserve">
+            <span class="wine-card__badge">Лимитированное</span>
+          </div>
+          <div class="wine-card__body">
+            <span class="wine-card__region">Красное сухое · Каберне Совиньон</span>
+            <h3 class="wine-card__name">Getap Noir<br>Reserve 2022</h3>
+            <div class="wine-card__divider"></div>
+            <p class="wine-card__desc">18 мес. в дубе · Тёмная вишня, табак, специи</p>
+            <div class="wine-card__stars">★★★★★</div>
+            <div class="wine-card__footer">
+              <span class="wine-card__price">6 900 ₽</span>
+              <button class="wine-card__btn" data-name="Getap Noir Reserve 2022" data-price="6900">В корзину</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="wine-card" data-category="red" data-full-desc="Элегантное красное из Мерло с черноморского побережья. 12 месяцев в дубовых бочках. Мягкий, округлый танин, ароматы спелой сливы, тёмного шоколада и ванили. Прекрасно сочетается с бараниной и утиной грудкой. Подавать при 16–17°C.">
+          <div class="wine-card__img-wrap">
+            <img class="wine-card__img" src="img/bottle2.png" alt="Getap Rouge">
+          </div>
+          <div class="wine-card__body">
+            <span class="wine-card__region">Красное сухое · Мерло</span>
+            <h3 class="wine-card__name">Getap Rouge<br>2023</h3>
+            <div class="wine-card__divider"></div>
+            <p class="wine-card__desc">12 мес. в дубе · Слива, шоколад, мягкий танин</p>
+            <div class="wine-card__stars">★★★★☆</div>
+            <div class="wine-card__footer">
+              <span class="wine-card__price">4 500 ₽</span>
+              <button class="wine-card__btn" data-name="Getap Rouge 2023" data-price="4500">В корзину</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="wine-card" data-category="white reserve" data-full-desc="Белое резервное из Рислинга — свежесть черноморского бриза в бокале. 8 месяцев на тонком осадке. Яркая цитрусовая кислотность, ароматы белого персика и абрикоса с минеральным послевкусием. Идеален к морепродуктам и белой рыбе. Подавать при 8–10°C.">
+          <div class="wine-card__img-wrap">
+            <img class="wine-card__img" src="img/bottle.png" alt="Getap Blanc">
+            <span class="wine-card__badge">Новинка</span>
+          </div>
+          <div class="wine-card__body">
+            <span class="wine-card__region">Белое сухое · Рислинг</span>
+            <h3 class="wine-card__name">Getap Blanc<br>Reserve 2024</h3>
+            <div class="wine-card__divider"></div>
+            <p class="wine-card__desc">Цитрус, белый персик, минеральность</p>
+            <div class="wine-card__stars">★★★★★</div>
+            <div class="wine-card__footer">
+              <span class="wine-card__price">5 200 ₽</span>
+              <button class="wine-card__btn" data-name="Getap Blanc Reserve 2024" data-price="5200">В корзину</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="wine-card" data-category="red reserve" data-full-desc="Уникальный сорт Арени Нуар — гордость армянского виноделия возрастом 6000 лет. Выращен на черноморских склонах Геленджика. Гранатовый цвет, ароматы свежей земляники, розмарина и граната. Лёгкий, живой, с приятной кислотностью. Подавать при 16°C.">
+          <div class="wine-card__img-wrap">
+            <img class="wine-card__img" src="img/bottle1.png" alt="Getap Areni">
+            <span class="wine-card__badge">Топ коллекции</span>
+          </div>
+          <div class="wine-card__body">
+            <span class="wine-card__region">Красное сухое · Арени Нуар</span>
+            <h3 class="wine-card__name">Getap Areni<br>2022</h3>
+            <div class="wine-card__divider"></div>
+            <p class="wine-card__desc">Гранат, розмарин, земляника · 6000 лет сорту</p>
+            <div class="wine-card__stars">★★★★★</div>
+            <div class="wine-card__footer">
+              <span class="wine-card__price">5 800 ₽</span>
+              <button class="wine-card__btn" data-name="Getap Areni 2022" data-price="5800">В корзину</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="wine-card" data-category="rose" data-full-desc="Розовое сухое из Пино Нуар — воздушное и свежее. Метод прямого прессования сохраняет всю деликатность сорта. Лепестки розы, клубника, грейпфрут и морской бриз в аромате. Идеально для летних вечеров и лёгких закусок. Подавать при 8–10°C.">
+          <div class="wine-card__img-wrap">
+            <img class="wine-card__img" src="img/bottle2.png" alt="Getap Rose">
+          </div>
+          <div class="wine-card__body">
+            <span class="wine-card__region">Розовое сухое · Пино Нуар</span>
+            <h3 class="wine-card__name">Getap Rosé<br>2024</h3>
+            <div class="wine-card__divider"></div>
+            <p class="wine-card__desc">Клубника, грейпфрут, лепестки роз</p>
+            <div class="wine-card__stars">★★★★☆</div>
+            <div class="wine-card__footer">
+              <span class="wine-card__price">3 900 ₽</span>
+              <button class="wine-card__btn" data-name="Getap Rosé 2024" data-price="3900">В корзину</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="wine-card" data-category="white" data-full-desc="Шардоне с частичной выдержкой в дубовых бочках — баланс свежести и сложности. Ароматы спелой груши, ванили и сливочного масла. Длинное, тёплое послевкусие. Прекрасно сочетается с мягкими сырами и пастой. Подавать при 10–12°C.">
+          <div class="wine-card__img-wrap">
+            <img class="wine-card__img" src="img/bottle.png" alt="Getap Chardonnay">
+          </div>
+          <div class="wine-card__body">
+            <span class="wine-card__region">Белое сухое · Шардоне</span>
+            <h3 class="wine-card__name">Getap<br>Chardonnay 2023</h3>
+            <div class="wine-card__divider"></div>
+            <p class="wine-card__desc">Выдержка в бочке · Ваниль, масло, груша</p>
+            <div class="wine-card__stars">★★★★☆</div>
+            <div class="wine-card__footer">
+              <span class="wine-card__price">4 100 ₽</span>
+              <button class="wine-card__btn" data-name="Getap Chardonnay 2023" data-price="4100">В корзину</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="wine-card" data-category="red reserve" data-full-desc="Вершина коллекции Getap. Только 1200 пронумерованных бутылок в год. 24 месяца в новых бочках Аллье. Монументальная структура, многослойный букет: тёмные ягоды, кедр, табак, чёрный перец. Вино для особых случаев. Подавать при 18°C.">
+          <div class="wine-card__img-wrap">
+            <img class="wine-card__img" src="img/bottle1.png" alt="Getap Grand Cru">
+            <span class="wine-card__badge">Grand Cru</span>
+          </div>
+          <div class="wine-card__body">
+            <span class="wine-card__region">Красное сухое · Каберне</span>
+            <h3 class="wine-card__name">Getap Grand<br>Cru 2020</h3>
+            <div class="wine-card__divider"></div>
+            <p class="wine-card__desc">24 мес. в дубе · Только 1200 бутылок в год</p>
+            <div class="wine-card__stars">★★★★★</div>
+            <div class="wine-card__footer">
+              <span class="wine-card__price">12 500 ₽</span>
+              <button class="wine-card__btn" data-name="Getap Grand Cru 2020" data-price="12500">В корзину</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="wine-card" data-category="white" data-full-desc="Совиньон Блан прямо с черноморских склонов — живой и ароматный. Без выдержки в дереве, только нержавеющая сталь. Взрывная свежесть крыжовника, белой смородины и срезанной травы. Идеален как аперитив. Подавать при 7–9°C.">
+          <div class="wine-card__img-wrap">
+            <img class="wine-card__img" src="img/bottle2.png" alt="Getap Sauvignon">
+          </div>
+          <div class="wine-card__body">
+            <span class="wine-card__region">Белое сухое · Совиньон Блан</span>
+            <h3 class="wine-card__name">Getap Sauvignon<br>Blanc 2024</h3>
+            <div class="wine-card__divider"></div>
+            <p class="wine-card__desc">Крыжовник, свежесть, цитрусовая кислотность</p>
+            <div class="wine-card__stars">★★★★☆</div>
+            <div class="wine-card__footer">
+              <span class="wine-card__price">3 600 ₽</span>
+              <button class="wine-card__btn" data-name="Getap Sauvignon Blanc 2024" data-price="3600">В корзину</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="wine-card" data-category="rose reserve" data-full-desc="Лимитированное розовое в провансальском стиле из Гренаша. 6 месяцев на осадке. Изысканный аромат малины, персика и морского бриза. Элегантное, с долгим послевкусием. Идеально к морепродуктам и лёгким сырам. Подавать при 8–10°C.">
+          <div class="wine-card__img-wrap">
+            <img class="wine-card__img" src="img/bottle.png" alt="Getap Rose Reserve">
+            <span class="wine-card__badge">Лимитированное</span>
+          </div>
+          <div class="wine-card__body">
+            <span class="wine-card__region">Розовое сухое · Гренаш</span>
+            <h3 class="wine-card__name">Getap Rosé<br>Reserve 2023</h3>
+            <div class="wine-card__divider"></div>
+            <p class="wine-card__desc">Прованский стиль · Малина, персик, морской бриз</p>
+            <div class="wine-card__stars">★★★★★</div>
+            <div class="wine-card__footer">
+              <span class="wine-card__price">5 500 ₽</span>
+              <button class="wine-card__btn" data-name="Getap Rosé Reserve 2023" data-price="5500">В корзину</button>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CART -->
+  <div class="cart" id="cart">
+    <div class="cart__header">
+      <h2 class="cart__title">Корзина</h2>
+      <button class="cart__close" id="cart-close">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="cart__items" id="cart-items">
+      <p class="cart__empty">Ваша корзина пуста</p>
+    </div>
+    <div class="cart__footer">
+      <div class="cart__total">
+        <span class="cart__total-label">Итого</span>
+        <span class="cart__total-price" id="cart-total">0 ₽</span>
+      </div>
+      <button class="cart__checkout">Оформить заказ</button>
+    </div>
+  </div>
+  <div class="cart__overlay" id="cart-overlay"></div>
+
+  <!-- FOOTER -->
+  <footer class="shop-footer">
+    <div class="shop-footer__inner">
+      <p class="shop-footer__brand">GETAP WINERY</p>
+      <p class="shop-footer__copy">© 2024 · Геленджик · Прямые поставки</p>
+      <a class="shop-footer__back" href="index.html">← Вернуться на главную</a>
+    </div>
+  </footer>
+
+  <!-- PRODUCT MODAL -->
+  <div class="product-modal" id="product-modal">
+    <div class="product-modal__overlay" id="modal-overlay"></div>
+    <div class="product-modal__panel">
+      <button class="product-modal__close" id="modal-close">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <div class="product-modal__img-wrap">
+        <img class="product-modal__img" id="modal-img" src="" alt="">
+      </div>
+      <div class="product-modal__info">
+        <span class="product-modal__region" id="modal-region"></span>
+        <h2 class="product-modal__name" id="modal-name"></h2>
+        <div class="product-modal__divider"></div>
+        <div class="product-modal__stars" id="modal-stars"></div>
+        <p class="product-modal__desc" id="modal-desc"></p>
+        <div class="product-modal__details">
+          <div class="product-modal__detail">
+            <span class="product-modal__detail-label">Выдержка</span>
+            <span class="product-modal__detail-val" id="modal-age"></span>
+          </div>
+          <div class="product-modal__detail">
+            <span class="product-modal__detail-label">Тираж</span>
+            <span class="product-modal__detail-val" id="modal-volume"></span>
+          </div>
+          <div class="product-modal__detail">
+            <span class="product-modal__detail-label">Терруар</span>
+            <span class="product-modal__detail-val">Геленджик · 400 м</span>
+          </div>
+        </div>
+        <div class="product-modal__footer">
+          <span class="product-modal__price" id="modal-price"></span>
+          <div class="product-modal__qty">
+            <button class="qty-btn" id="qty-minus">−</button>
+            <span class="qty-val" id="qty-val">1</span>
+            <button class="qty-btn" id="qty-plus">+</button>
+          </div>
+          <button class="product-modal__add" id="modal-add">В корзину</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function handlePayment() {
+      document.getElementById('order-number').textContent = Math.floor(100000 + Math.random() * 900000)
+      document.querySelectorAll('.checkout-page').forEach(p => p.style.display = 'none')
+      document.getElementById('checkout-page-3').style.display = 'block'
+      document.querySelectorAll('.checkout-step').forEach(s => {
+        s.classList.remove('is-active')
+        s.classList.add('is-done')
+      })
+      cartItems.length = 0
+      renderCart()
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+    gsap.registerPlugin(ScrollTrigger)
+
+    gsap.to('.shop-hero__bg', {
+      yPercent: -20,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '.shop-hero',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1
+      }
+    })
+
+    const cards = document.querySelectorAll('.wine-card')
+    cards.forEach((card, i) => {
+      ScrollTrigger.create({
+        trigger: card,
+        start: 'top 85%',
+        onEnter: () => {
+          setTimeout(() => card.classList.add('is-visible'), i % 3 * 120)
+        }
+      })
+    })
+
+    const cartItems = []
+    const cartEl = document.getElementById('cart')
+    const overlay = document.getElementById('cart-overlay')
+    const itemsEl = document.getElementById('cart-items')
+    const totalEl = document.getElementById('cart-total')
+    const countEl = document.querySelector('.cart-count')
+
+    const openCart = () => { cartEl.classList.add('is-open'); overlay.classList.add('is-open') }
+    const closeCart = () => { cartEl.classList.remove('is-open'); overlay.classList.remove('is-open') }
+
+    const renderCart = () => {
+      countEl.textContent = cartItems.length
+      if (!cartItems.length) {
+        itemsEl.innerHTML = '<p class="cart__empty">Ваша корзина пуста</p>'
+        totalEl.textContent = '0 ₽'
+        return
+      }
+      itemsEl.innerHTML = cartItems.map((item, i) => `
+        <div class="cart-item">
+          <div class="cart-item__info">
+            <p class="cart-item__name">${item.name}</p>
+            <p class="cart-item__price">${item.price.toLocaleString('ru-RU')} ₽</p>
+          </div>
+          <button class="cart-item__remove" data-i="${i}">×</button>
+        </div>
+      `).join('')
+      const sum = cartItems.reduce((a, b) => a + b.price, 0)
+      totalEl.textContent = sum.toLocaleString('ru-RU') + ' ₽'
+      itemsEl.querySelectorAll('.cart-item__remove').forEach(btn => {
+        btn.addEventListener('click', () => { cartItems.splice(+btn.dataset.i, 1); renderCart() })
+      })
+    }
+
+    document.getElementById('cart-btn').addEventListener('click', openCart)
+    document.getElementById('cart-close').addEventListener('click', closeCart)
+    overlay.addEventListener('click', closeCart)
+
+    document.querySelectorAll('.wine-card__btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        cartItems.push({ name: btn.dataset.name, price: +btn.dataset.price })
+        renderCart()
+        const orig = btn.textContent
+        btn.textContent = '✓ Добавлено'
+        btn.style.cssText = 'background:var(--gold);color:#0e0a06;border-color:var(--gold)'
+        setTimeout(() => { btn.textContent = orig; btn.style.cssText = '' }, 1500)
+      })
+    })
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('is-active'))
+        btn.classList.add('is-active')
+        const f = btn.dataset.filter
+        cards.forEach(card => {
+          card.style.display = f === 'all' || (card.dataset.category || '').includes(f) ? '' : 'none'
+        })
+      })
+    })
+
+    // Данные для модального окна
+    const wineData = {
+      'Getap Noir Reserve 2022':    { age:'18 мес. в дубе', volume:'2 400 бутылок' },
+      'Getap Rouge 2023':           { age:'12 мес. в дубе', volume:'4 800 бутылок' },
+      'Getap Blanc Reserve 2024':   { age:'8 мес. в бочке', volume:'1 800 бутылок' },
+      'Getap Areni 2022':           { age:'14 мес. в дубе', volume:'3 600 бутылок' },
+      'Getap Rosé 2024':            { age:'Без выдержки',   volume:'5 000 бутылок' },
+      'Getap Chardonnay 2023':      { age:'10 мес. в бочке',volume:'3 200 бутылок' },
+      'Getap Grand Cru 2020':       { age:'24 мес. в дубе', volume:'1 200 бутылок' },
+      'Getap Sauvignon Blanc 2024': { age:'Без выдержки',   volume:'4 400 бутылок' },
+      'Getap Rosé Reserve 2023':    { age:'6 мес. в дубе',  volume:'1 600 бутылок' },
+    }
+
+    const modal = document.getElementById('product-modal')
+    let currentQty = 1
+    let currentName = ''
+    let currentPrice = 0
+
+    const openModal = (card) => {
+      const btn = card.querySelector('.wine-card__btn')
+      currentName = btn.dataset.name
+      currentPrice = +btn.dataset.price
+      currentQty = 1
+      document.getElementById('modal-img').src = card.querySelector('.wine-card__img').src
+      document.getElementById('modal-region').textContent = card.querySelector('.wine-card__region').textContent
+      document.getElementById('modal-name').innerHTML = card.querySelector('.wine-card__name').innerHTML
+      document.getElementById('modal-stars').textContent = card.querySelector('.wine-card__stars').textContent
+      document.getElementById('modal-desc').textContent = card.dataset.fullDesc || card.querySelector('.wine-card__desc').textContent
+      document.getElementById('modal-price').textContent = currentPrice.toLocaleString('ru-RU') + ' ₽'
+      document.getElementById('qty-val').textContent = '1'
+      const data = wineData[currentName] || {}
+      document.getElementById('modal-age').textContent = data.age || '—'
+      document.getElementById('modal-volume').textContent = data.volume || '—'
+      modal.classList.add('is-open')
+      document.body.style.overflow = 'hidden'
+    }
+
+    const closeModal = () => {
+      modal.classList.remove('is-open')
+      document.body.style.overflow = ''
+    }
+
+    document.getElementById('modal-overlay').addEventListener('click', closeModal)
+    document.getElementById('modal-close').addEventListener('click', closeModal)
+
+    document.getElementById('qty-minus').addEventListener('click', () => {
+      if (currentQty > 1) { currentQty--; document.getElementById('qty-val').textContent = currentQty }
+    })
+    document.getElementById('qty-plus').addEventListener('click', () => {
+      currentQty++; document.getElementById('qty-val').textContent = currentQty
+    })
+
+    document.getElementById('modal-add').addEventListener('click', () => {
+      for (let i = 0; i < currentQty; i++) cartItems.push({ name: currentName, price: currentPrice })
+      renderCart()
+      closeModal()
+      openCart()
+    })
+
+    cards.forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('.wine-card__btn')) return
+        openModal(card)
+      })
+    })
+
+    const checkoutModal = document.getElementById('checkout-modal')
+    let currentStep = 1
+
+    const goToStep = (step) => {
+      document.querySelectorAll('.checkout-page').forEach(p => p.style.display = 'none')
+      document.getElementById(`checkout-page-${step}`).style.display = 'block'
+      document.querySelectorAll('.checkout-step').forEach((s, i) => {
+        s.classList.remove('is-active', 'is-done')
+        if (i + 1 < step) s.classList.add('is-done')
+        if (i + 1 === step) s.classList.add('is-active')
+      })
+      currentStep = step
+    }
+
+    const openCheckout = () => {
+      const sum = cartItems.reduce((a, b) => a + b.price, 0)
+      document.getElementById('checkout-sum').textContent = sum.toLocaleString('ru-RU') + ' ₽'
+      document.getElementById('checkout-sum-2').textContent = sum.toLocaleString('ru-RU') + ' ₽'
+      const summary = document.getElementById('checkout-summary')
+      const grouped = {}
+      cartItems.forEach(item => { grouped[item.name] = (grouped[item.name] || 0) + item.price })
+      summary.innerHTML = Object.entries(grouped).map(([name, price]) =>
+        `<div class="summary-item"><span>${name}</span><span>${price.toLocaleString('ru-RU')} ₽</span></div>`
+      ).join('')
+      goToStep(1)
+      checkoutModal.classList.add('is-open')
+      document.body.style.overflow = 'hidden'
+    }
+
+    const closeCheckout = () => {
+      checkoutModal.classList.remove('is-open')
+      document.body.style.overflow = ''
+    }
+
+    document.querySelector('.cart__checkout').addEventListener('click', openCheckout)
+    document.getElementById('checkout-overlay').addEventListener('click', closeCheckout)
+    document.getElementById('checkout-close').addEventListener('click', closeCheckout)
+
+    document.getElementById('checkout-next').addEventListener('click', () => goToStep(2))
+    document.getElementById('checkout-back').addEventListener('click', () => goToStep(1))
+
+    document.querySelectorAll('input[name="payment"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        document.getElementById('card-fields').style.display =
+          radio.value === 'card' ? 'block' : 'none'
+      })
+    })
+
+    document.getElementById('ch-card')?.addEventListener('input', e => {
+      e.target.value = e.target.value.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim()
+    })
+    }) // end DOMContentLoaded
+  </script>
+
+  <!-- CHECKOUT MODAL -->
+  <div class="checkout-modal" id="checkout-modal">
+    <div class="checkout-modal__overlay" id="checkout-overlay"></div>
+    <div class="checkout-modal__panel">
+
+      <button class="checkout-modal__close" id="checkout-close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+
+      <div class="checkout-steps">
+        <div class="checkout-step is-active" data-step="1">
+          <div class="checkout-step__num">01</div>
+          <span class="checkout-step__label">Доставка</span>
+        </div>
+        <div class="checkout-step__line"></div>
+        <div class="checkout-step" data-step="2">
+          <div class="checkout-step__num">02</div>
+          <span class="checkout-step__label">Оплата</span>
+        </div>
+        <div class="checkout-step__line"></div>
+        <div class="checkout-step" data-step="3">
+          <div class="checkout-step__num">03</div>
+          <span class="checkout-step__label">Готово</span>
+        </div>
+      </div>
+
+      <div class="checkout-page" id="checkout-page-1">
+        <div class="checkout-modal__header">
+          <span class="checkout-modal__eyebrow">GETAP WINERY · ШАГ 1 ИЗ 2</span>
+          <h2 class="checkout-modal__title">Доставка</h2>
+          <div class="checkout-modal__divider"></div>
+        </div>
+        <div class="checkout-fields">
+          <div class="checkout-field">
+            <label class="checkout-label">Имя и фамилия</label>
+            <input class="checkout-input" type="text" id="ch-name" placeholder="Александр Иванов">
+          </div>
+          <div class="checkout-field">
+            <label class="checkout-label">Телефон</label>
+            <input class="checkout-input" type="tel" id="ch-phone" placeholder="+7 (999) 000-00-00">
+          </div>
+          <div class="checkout-field">
+            <label class="checkout-label">Город</label>
+            <input class="checkout-input" type="text" id="ch-city" placeholder="Москва">
+          </div>
+          <div class="checkout-field">
+            <label class="checkout-label">Адрес доставки</label>
+            <input class="checkout-input" type="text" id="ch-address" placeholder="Улица, дом, квартира">
+          </div>
+        </div>
+        <div class="checkout-order-summary" id="checkout-summary"></div>
+        <div class="checkout-total-row">
+          <span class="checkout-total-label">Итого</span>
+          <span class="checkout-total-sum" id="checkout-sum"></span>
+        </div>
+        <button class="checkout-pay" id="checkout-next">Далее → Оплата</button>
+      </div>
+
+      <div class="checkout-page" id="checkout-page-2" style="display:none">
+        <div class="checkout-modal__header">
+          <span class="checkout-modal__eyebrow">GETAP WINERY · ШАГ 2 ИЗ 2</span>
+          <h2 class="checkout-modal__title">Оплата</h2>
+          <div class="checkout-modal__divider"></div>
+        </div>
+        <div class="checkout-payment">
+          <label class="payment-option">
+            <input type="radio" name="payment" value="card" checked>
+            <span class="payment-option__box">
+              <span class="payment-option__name">Банковская карта</span>
+              <span class="payment-option__logos">
+                <span class="payment-logo">VISA</span>
+                <span class="payment-logo">MC</span>
+                <span class="payment-logo">МИР</span>
+              </span>
+            </span>
+          </label>
+          <label class="payment-option">
+            <input type="radio" name="payment" value="sbp">
+            <span class="payment-option__box">
+              <span class="payment-option__name">СБП</span>
+              <span class="payment-option__logos">
+                <span class="payment-logo">СБП</span>
+              </span>
+            </span>
+          </label>
+        </div>
+        <div id="card-fields">
+          <div class="checkout-fields">
+            <div class="checkout-field">
+              <label class="checkout-label">Номер карты</label>
+              <input class="checkout-input" type="text" id="ch-card" placeholder="0000 0000 0000 0000" maxlength="19">
+            </div>
+            <div class="checkout-fields--row">
+              <div class="checkout-field">
+                <label class="checkout-label">Срок действия</label>
+                <input class="checkout-input" type="text" id="ch-exp" placeholder="ММ/ГГ" maxlength="5">
+              </div>
+              <div class="checkout-field">
+                <label class="checkout-label">CVV</label>
+                <input class="checkout-input" type="text" id="ch-cvv" placeholder="•••" maxlength="3">
+              </div>
+            </div>
+            <div class="checkout-field">
+              <label class="checkout-label">Имя на карте</label>
+              <input class="checkout-input" type="text" id="ch-holder" placeholder="ALEXANDER IVANOV">
+            </div>
+          </div>
+        </div>
+        <div class="checkout-secure">
+          <svg width="12" height="14" viewBox="0 0 12 14" fill="none">
+            <path d="M6 1L1 3v4c0 2.5 2 4.5 5 6 3-1.5 5-3.5 5-6V3L6 1z" stroke="#c9a227" stroke-width="1"/>
+          </svg>
+          <span>Безопасная оплата · SSL шифрование</span>
+        </div>
+        <div class="checkout-total-row">
+          <span class="checkout-total-label">К оплате</span>
+          <span class="checkout-total-sum" id="checkout-sum-2"></span>
+        </div>
+        <div class="checkout-btns">
+          <button class="checkout-back" id="checkout-back">← Назад</button>
+          <button class="checkout-pay" id="checkout-pay" onclick="handlePayment()">Оплатить</button>
+        </div>
+      </div>
+
+      <div class="checkout-page checkout-success" id="checkout-page-3" style="display:none">
+        <div class="checkout-success__circle">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#c9a227" stroke-width="1.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <h3 class="checkout-success__title">Заказ оплачен</h3>
+        <div class="checkout-modal__divider" style="margin:1rem auto"></div>
+        <p class="checkout-success__text">
+          Благодарим за выбор Getap Winery.<br>
+          Менеджер свяжется с вами в течение 30 минут<br>
+          для подтверждения доставки.
+        </p>
+        <p class="checkout-success__order">Заказ № <span id="order-number"></span></p>
+        <p class="checkout-success__brand">GETAP WINERY · ГЕЛЕНДЖИК · 2024</p>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

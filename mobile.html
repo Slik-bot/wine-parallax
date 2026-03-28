@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Getap Winery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <style>
+    :root {
+      --gold: #c9a227;
+      --cream: #f5ede0;
+      --muted: rgba(245,237,224,0.55);
+      --bg: #0a0800;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html {
+      scroll-behavior: smooth;
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+    }
+    body { background: var(--bg); color: var(--cream); font-family: 'Cormorant Garamond', Georgia, serif; overflow-x: hidden; }
+
+    /* HEADER */
+    .header {
+      position: fixed; top:0; left:0; right:0;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.2rem;
+      background: rgba(10,5,0,0.95);
+      border-bottom: 1px solid rgba(201,162,39,0.1);
+      transition: transform 0.3s;
+    }
+    .header__logo {
+      display: flex; align-items: center; gap: 0.5rem;
+      text-decoration: none;
+    }
+    .header__logo-text {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem; letter-spacing: 0.35em;
+      color: var(--cream);
+    }
+    .header__logo-sub {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.45rem; letter-spacing: 0.3em;
+      color: var(--gold); display: block;
+    }
+
+    /* Бургер */
+    .burger {
+      display: flex; flex-direction: column; gap: 5px;
+      background: none; border: none; cursor: pointer; padding: 4px;
+    }
+    .burger__line {
+      width: 22px; height: 1px; background: var(--gold);
+      transition: all 0.3s;
+    }
+
+    /* Боковое меню */
+    .side-nav {
+      position: fixed; top:0; right:0; bottom:0;
+      width: 70vw; max-width: 280px;
+      background: rgba(10,5,0,0.99);
+      border-left: 1px solid rgba(201,162,39,0.15);
+      z-index: 200;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: 3rem 2rem;
+      gap: 2rem;
+      transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+    .side-nav.is-open { transform: translateX(0); }
+    .side-nav__link {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem; font-weight: 300;
+      color: var(--cream); text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.3s;
+    }
+    .side-nav__link:hover { color: var(--gold); }
+    .side-nav__cta {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.6rem; letter-spacing: 0.25em;
+      border: 1px solid var(--gold); color: var(--gold);
+      padding: 12px 24px; text-decoration: none;
+      text-align: center; margin-top: 1rem;
+      transition: all 0.3s;
+    }
+    .side-nav__overlay {
+      position: fixed; inset:0; z-index: 199;
+      background: rgba(0,0,0,0.6);
+      display: none;
+    }
+    .side-nav__overlay.is-open { display: block; }
+
+    /* СЕКЦИИ */
+    .scene {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      justify-content: flex-start;
+      padding: 5rem 1.5rem 2rem;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      transition: transform 0.6s ease;
+    }
+
+    .scene__bg {
+      position: absolute; inset:0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+      will-change: transform;
+      transition: transform 1.2s cubic-bezier(0.4,0,0.2,1);
+      transform: scale(1.08);
+    }
+
+    .scene.is-entering .scene__bg {
+      transform: scale(1);
+    }
+
+    .scene__vignette {
+      position: absolute; inset:0;
+      background: linear-gradient(
+        to bottom,
+        rgba(10,5,0,0.3) 0%,
+        rgba(10,5,0,0.2) 40%,
+        rgba(10,5,0,0.75) 100%
+      );
+    }
+
+    .scene__bottle {
+      position: absolute;
+      right: -2%;
+      bottom: 0;
+      height: 55vh;
+      width: auto;
+      z-index: 2;
+      object-fit: contain;
+    }
+
+    .scene__content {
+      position: relative; z-index: 3;
+      max-width: 58%;
+      padding-bottom: 1rem;
+    }
+
+    .eyebrow {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.5rem; letter-spacing: 0.35em;
+      color: var(--gold); margin-bottom: 0.6rem;
+    }
+
+    .hero__title {
+      font-size: clamp(2rem, 10vw, 3rem);
+      font-weight: 300; line-height: 1.05;
+      letter-spacing: 0.04em; margin-bottom: 0.4rem;
+    }
+
+    .scene__divider {
+      width: 30px; height: 1px;
+      background: var(--gold); margin: 0.6rem 0;
+    }
+
+    .hero__subtitle {
+      font-size: 0.85rem;
+      color: var(--muted); margin-bottom: 0.6rem;
+    }
+
+    .scene__story {
+      font-size: 0.8rem; line-height: 1.75;
+      color: rgba(245,237,224,0.8);
+    }
+
+    /* Центрированные сцены (2 и 4) */
+    .scene--center .scene__content {
+      max-width: 90%;
+      text-align: center;
+      margin: 0 auto;
+      padding-bottom: 2rem;
+    }
+    .scene--center {
+      justify-content: center;
+      padding-top: 5rem;
+    }
+    .scene--center .hero__title {
+      font-size: clamp(1.8rem, 8vw, 2.5rem);
+    }
+
+    /* CTA кнопка */
+    .cta {
+      display: inline-block;
+      margin-top: 1.2rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.58rem; letter-spacing: 0.25em;
+      border: 1px solid var(--gold); color: var(--gold);
+      padding: 12px 28px; text-decoration: none;
+      transition: all 0.3s;
+    }
+    .cta:hover { background: var(--gold); color: var(--bg); }
+
+    /* VIP кнопка */
+    .vip-btn-fixed {
+      position: fixed; bottom: 1.5rem; left: 1.2rem;
+      z-index: 90;
+      display: flex; align-items: center; gap: 0.4rem;
+      background: rgba(10,5,0,0.9);
+      border: 1px solid rgba(201,162,39,0.4);
+      border-radius: 50px; padding: 8px 16px;
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.52rem; letter-spacing: 0.25em;
+      color: var(--gold);
+    }
+
+    /* Счётчик сцен */
+    .scene-num {
+      position: absolute; bottom: 1.2rem; right: 1.2rem;
+      z-index: 3;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.55rem; letter-spacing: 0.2em;
+      color: rgba(201,162,39,0.6);
+    }
+
+    .vip-modal {
+      position: fixed; inset:0; z-index:500;
+      display:flex; align-items:flex-end;
+      opacity:0; pointer-events:none;
+      transition:opacity 0.4s;
+    }
+    .vip-modal.is-open { opacity:1; pointer-events:all; }
+
+    .vip-modal__overlay {
+      position:absolute; inset:0;
+      background:rgba(0,0,0,0.8);
+    }
+
+    .vip-modal__panel {
+      position:relative; z-index:1;
+      width:100%;
+      max-height:85vh; overflow-y:auto;
+      background:rgba(14,8,2,0.98);
+      border:1px solid rgba(201,162,39,0.2);
+      border-radius:20px 20px 0 0;
+      padding:2rem 1.5rem;
+      transform:translateY(100%);
+      transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+    .vip-modal.is-open .vip-modal__panel { transform:translateY(0); }
+
+    .vip-modal__logo {
+      display:flex; align-items:center;
+      justify-content:center; gap:0.6rem;
+      margin-bottom:0.4rem;
+    }
+    .vip-modal__close {
+      position:absolute; top:1rem; right:1.2rem;
+      background:none; border:none;
+      color:rgba(245,237,224,0.4);
+      font-size:1.4rem; cursor:pointer;
+    }
+
+    .vip-tabs {
+      display:flex; border:1px solid rgba(201,162,39,0.15);
+      border-radius:10px; overflow:hidden; margin-bottom:1.2rem;
+    }
+    .vip-tab {
+      flex:1; font-family:'Montserrat',sans-serif;
+      font-size:0.55rem; letter-spacing:0.2em;
+      background:none; border:none;
+      color:rgba(245,237,224,0.4);
+      padding:10px; cursor:pointer; transition:all 0.3s;
+    }
+    .vip-tab.is-active {
+      background:rgba(201,162,39,0.1); color:#c9a227;
+    }
+
+    .vip-fields { display:flex; flex-direction:column; gap:0.8rem; }
+    .vip-field { display:flex; flex-direction:column; gap:0.3rem; }
+    .vip-label {
+      font-family:'Montserrat',sans-serif;
+      font-size:0.5rem; letter-spacing:0.2em;
+      color:rgba(245,237,224,0.4);
+    }
+    .vip-input {
+      background:transparent;
+      border:none; border-bottom:1px solid rgba(201,162,39,0.2);
+      color:#f5ede0; font-family:'Cormorant Garamond',serif;
+      font-size:1rem; padding:8px 0; width:100%;
+    }
+    .vip-input:focus { outline:none; border-bottom-color:rgba(201,162,39,0.6); }
+    .vip-input::placeholder { color:rgba(245,237,224,0.2); }
+
+    .vip-perks {
+      display:flex; flex-direction:column; gap:0.7rem;
+      padding:0.8rem; margin-bottom:1rem;
+      background:rgba(201,162,39,0.03);
+      border:1px solid rgba(201,162,39,0.1);
+      border-radius:12px;
+    }
+    .vip-perk { display:flex; align-items:flex-start; gap:0.6rem; }
+    .vip-perk__icon { color:#c9a227; font-size:0.65rem; margin-top:3px; }
+    .vip-perk__title { font-size:0.85rem; margin-bottom:0.1rem; }
+    .vip-perk__desc {
+      font-family:'Montserrat',sans-serif;
+      font-size:0.48rem; letter-spacing:0.1em;
+      color:rgba(245,237,224,0.4);
+    }
+
+    .vip-btn {
+      width:100%; font-family:'Montserrat',sans-serif;
+      font-size:0.58rem; letter-spacing:0.25em;
+      border:1px solid rgba(201,162,39,0.6);
+      color:#c9a227; background:rgba(201,162,39,0.06);
+      padding:13px; cursor:pointer; border-radius:10px;
+      transition:all 0.3s;
+    }
+    .vip-btn:hover { background:#c9a227; color:#0e0a06; }
+
+    .vip-switch__link { color:rgba(201,162,39,0.7); text-decoration:none; }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <a class="header__logo" href="#">
+    <svg width="28" height="28" viewBox="0 0 140 44" fill="none">
+      <path d="M16 6 Q14 6 13 8 Q11 10 12 13 Q10 13 9 15 Q8 18 10 20 Q11 28 14 33 Q16 37 20 38 Q24 37 26 33 Q29 28 30 20 Q32 18 31 15 Q30 13 28 13 Q29 10 27 8 Q26 6 24 6 Z" stroke="#c9a227" stroke-width="1.5" fill="none"/>
+      <line x1="16" y1="6" x2="24" y2="6" stroke="#c9a227" stroke-width="1.5"/>
+      <line x1="15" y1="4" x2="25" y2="4" stroke="#c9a227" stroke-width="1.5"/>
+      <path d="M12 13 Q7 14 7 19 Q7 24 12 24" stroke="#c9a227" stroke-width="1.5" fill="none"/>
+      <path d="M28 13 Q33 14 33 19 Q33 24 28 24" stroke="#c9a227" stroke-width="1.5" fill="none"/>
+    </svg>
+    <div>
+      <span class="header__logo-text">GETAP</span>
+      <span class="header__logo-sub">WINERY</span>
+    </div>
+  </a>
+  <button class="burger" id="burger">
+    <span class="burger__line"></span>
+    <span class="burger__line"></span>
+    <span class="burger__line"></span>
+  </button>
+</header>
+
+<div class="side-nav__overlay" id="nav-overlay"></div>
+<nav class="side-nav" id="side-nav">
+  <a class="side-nav__link" href="#scene-1">История</a>
+  <a class="side-nav__link" href="#scene-2">Традиции</a>
+  <a class="side-nav__link" href="#scene-3">Коллекция</a>
+  <a class="side-nav__link" href="#scene-5">О нас</a>
+  <a class="side-nav__cta" href="shop.html">В магазин →</a>
+</nav>
+
+<main>
+
+  <!-- Сцена 1 -->
+  <section class="scene" id="scene-1">
+    <img class="scene__bg" src="img/bg1.png" alt="" loading="eager">
+    <div class="scene__vignette"></div>
+    <img class="scene__bottle" src="img/bottle1.png" alt=""
+      data-aos="fade-left" data-aos-duration="900" data-aos-delay="300">
+    <div class="scene__content"
+      data-aos="fade-right" data-aos-duration="800">
+      <span class="eyebrow">GETAP WINERY · ОСНОВАНО В 2018</span>
+      <h1 class="hero__title">ВИНА<br>ГЕЛЕНДЖИКА</h1>
+      <div class="scene__divider"></div>
+      <p class="hero__subtitle">Природа. Традиции. Искусство.</p>
+      <p class="scene__story">Там, где Кавказские горы спускаются к Чёрному морю, на высоте 400 метров над уровнем моря рождается наше вино. Солёный бриз, горное солнце и вулканическая почва создают терруар, который невозможно воспроизвести нигде в мире. Каждая лоза выращена вручную. Каждый урожай — событие.</p>
+    </div>
+    <span class="scene-num">01 / 05</span>
+  </section>
+
+  <!-- Сцена 2 -->
+  <section class="scene scene--center" id="scene-2">
+    <img class="scene__bg" src="img/wine-flow-1.png" alt="">
+    <div class="scene__vignette"></div>
+    <div class="scene__content"
+      data-aos="fade-up" data-aos-duration="1000">
+      <span class="eyebrow">GETAP WINERY · АРМЕНИЯ</span>
+      <h2 class="hero__title">Шесть тысяч<br>лет традиций</h2>
+      <div class="scene__divider" style="margin:0.8rem auto"></div>
+      <p class="scene__story">Армения — родина вина. Здесь, в пещере Арени, найден древнейший винодельческий комплекс мира возрастом более 6000 лет. Getap продолжает эту тысячелетнюю традицию на черноморском побережье Геленджика, сочетая древние методы с современным виноделием.</p>
+    </div>
+    <span class="scene-num">02 / 05</span>
+  </section>
+
+  <!-- Сцена 3 -->
+  <section class="scene" id="scene-3">
+    <img class="scene__bg" src="img/bg2.png" alt="">
+    <div class="scene__vignette"></div>
+    <img class="scene__bottle" src="img/bottle2.png" alt=""
+      data-aos="fade-left" data-aos-duration="900" data-aos-delay="200">
+    <div class="scene__content"
+      data-aos="fade-right" data-aos-duration="800">
+      <span class="eyebrow">GRAN RESERVA · 2024</span>
+      <h2 class="hero__title">CHATEAU<br>LAURENT</h2>
+      <div class="scene__divider"></div>
+      <p class="hero__subtitle">Cabernet Sauvignon · Napa Valley</p>
+      <p class="scene__story">Выдержан 18 месяцев в новых французских бочках из дуба Аллье. Бархатистый танин, богатый букет тёмной вишни, табака и восточных специй. Ручной сбор. Ручная сортировка. Без компромиссов. Производится не более 3 000 бутылок в год — для тех, кто понимает разницу между вином и искусством.</p>
+    </div>
+    <span class="scene-num">03 / 05</span>
+  </section>
+
+  <!-- Сцена 4 -->
+  <section class="scene scene--center" id="scene-4">
+    <img class="scene__bg" src="img/wine-flow-2.png" alt="">
+    <div class="scene__vignette"></div>
+    <div class="scene__content"
+      data-aos="fade-up" data-aos-duration="1000">
+      <span class="eyebrow">GETAP WINERY · ТЕРРУАР</span>
+      <h2 class="hero__title">Вино — это<br>закат в бокале</h2>
+      <div class="scene__divider" style="margin:0.8rem auto"></div>
+      <p class="scene__story">Каждый глоток — это память о месте. О солёном ветре с моря, о рассветах над виноградником, о руках мастера, собравшего этот урожай вручную. Getap — это не просто вино. Это эмоция, бережно разлитая по бутылкам.</p>
+      <p class="scene__story" style="margin-top:0.8rem;font-size:0.65rem;color:rgba(245,237,224,0.35);font-family:'Montserrat',sans-serif;letter-spacing:0.15em;line-height:2">ВЫСОТА · 400 М · ВУЛКАНИЧЕСКИЕ ПОЧВЫ · РУЧНОЙ СБОР</p>
+    </div>
+    <span class="scene-num">04 / 05</span>
+  </section>
+
+  <!-- Сцена 5 -->
+  <section class="scene" id="scene-5">
+    <img class="scene__bg" src="img/table-bg.png" alt=""
+      style="object-position: center 40%">
+    <div class="scene__vignette"></div>
+    <img class="scene__bottle" src="img/bottle.png" alt=""
+      data-aos="fade-left" data-aos-duration="900" data-aos-delay="200">
+    <div class="scene__content"
+      data-aos="fade-right" data-aos-duration="800">
+      <span class="eyebrow">АВТОРСКАЯ КОЛЛЕКЦИЯ · ПРЯМЫЕ ПОСТАВКИ</span>
+      <h2 class="hero__title">ВИНА<br>ГЕЛЕНДЖИКА</h2>
+      <div class="scene__divider"></div>
+      <p class="scene__story">Мы не работаем с посредниками. Только прямые поставки от виноградника до вашего стола. Каждая бутылка пронумерована и сопровождается сертификатом подлинности. Это не просто вино — это кусочек черноморского побережья, запечатанный для вашего особенного вечера.</p>
+      <a class="cta" href="shop.html">Открыть коллекцию →</a>
+    </div>
+    <span class="scene-num">05 / 05</span>
+  </section>
+
+</main>
+
+<button class="vip-btn-fixed" id="vip-btn">♛ VIP</button>
+
+<div class="vip-modal" id="vip-modal">
+  <div class="vip-modal__overlay" id="vip-overlay"></div>
+  <div class="vip-modal__panel">
+    <button class="vip-modal__close" id="vip-close">×</button>
+    <div class="vip-modal__logo">
+      <span style="color:#c9a227;font-size:1.2rem">♛</span>
+      <span style="font-family:'Montserrat',sans-serif;font-size:0.55rem;letter-spacing:0.4em;color:#c9a227">GETAP PRIVATE CLUB</span>
+    </div>
+    <div style="width:30px;height:1px;background:#c9a227;margin:0.6rem auto 1.2rem;opacity:0.5"></div>
+
+    <div class="vip-tabs">
+      <button class="vip-tab is-active" data-tab="login">Войти</button>
+      <button class="vip-tab" data-tab="register">Вступить</button>
+    </div>
+
+    <div class="vip-page" id="vip-login">
+      <p style="font-size:0.82rem;color:rgba(245,237,224,0.5);text-align:center;margin-bottom:1.2rem">Добро пожаловать в закрытый клуб</p>
+      <div class="vip-fields">
+        <div class="vip-field"><label class="vip-label">Email</label><input class="vip-input" type="email" placeholder="your@email.com"></div>
+        <div class="vip-field"><label class="vip-label">Пароль</label><input class="vip-input" type="password" placeholder="••••••••"></div>
+      </div>
+      <button class="vip-btn" style="margin-top:1.2rem">Войти в клуб</button>
+      <p style="text-align:center;font-family:'Montserrat',sans-serif;font-size:0.5rem;letter-spacing:0.15em;color:rgba(245,237,224,0.3);margin-top:0.8rem">
+        Нет аккаунта? <a href="#" class="vip-switch__link" data-goto="register" style="color:rgba(201,162,39,0.7);text-decoration:none">Присоединиться →</a>
+      </p>
+    </div>
+
+    <div class="vip-page" id="vip-register" style="display:none">
+      <div class="vip-perks">
+        <div class="vip-perk"><span class="vip-perk__icon">◈</span><div><p class="vip-perk__title">Ранний доступ</p><p class="vip-perk__desc">Новые коллекции за 48ч до открытых продаж</p></div></div>
+        <div class="vip-perk"><span class="vip-perk__icon">◈</span><div><p class="vip-perk__title">Скидка 15%</p><p class="vip-perk__desc">На все заказы навсегда</p></div></div>
+        <div class="vip-perk"><span class="vip-perk__icon">◈</span><div><p class="vip-perk__title">Личный сомелье</p><p class="vip-perk__desc">Персональные рекомендации</p></div></div>
+      </div>
+      <div class="vip-fields">
+        <div class="vip-field"><label class="vip-label">Имя</label><input class="vip-input" type="text" placeholder="Александр"></div>
+        <div class="vip-field"><label class="vip-label">Email</label><input class="vip-input" type="email" placeholder="your@email.com"></div>
+        <div class="vip-field"><label class="vip-label">Телефон</label><input class="vip-input" type="tel" placeholder="+7 (999) 000-00-00"></div>
+      </div>
+      <button class="vip-btn" id="mob-register-btn" style="margin-top:1rem">Подать заявку</button>
+    </div>
+
+    <div class="vip-page" id="vip-success" style="display:none;text-align:center;padding:1rem 0">
+      <div style="width:60px;height:60px;border-radius:50%;border:1px solid #c9a227;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.3rem;color:#c9a227">♛</div>
+      <h3 style="font-size:1.4rem;font-weight:300;letter-spacing:0.06em;margin-bottom:0.5rem">Добро пожаловать<br>в клуб</h3>
+      <p style="font-size:0.82rem;line-height:1.9;color:rgba(245,237,224,0.5)">Ваша заявка принята.<br>Менеджер свяжется с вами<br>в течение 24 часов.</p>
+      <p style="font-family:'Montserrat',sans-serif;font-size:0.52rem;letter-spacing:0.3em;color:#c9a227;margin-top:1rem">GETAP PRIVATE CLUB</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+
+    AOS.init({
+      duration: 800,
+      easing: 'ease-out-quart',
+      once: false,
+      offset: 80
+    })
+
+    // Параллакс-эффект при скролле между сценами
+    const scenes = document.querySelectorAll('.scene')
+
+    const sceneObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-entering')
+          entry.target.classList.remove('is-leaving')
+        } else {
+          entry.target.classList.add('is-leaving')
+          entry.target.classList.remove('is-entering')
+        }
+      })
+    }, { threshold: 0.5 })
+
+    scenes.forEach(scene => sceneObserver.observe(scene))
+
+
+    // Бургер
+    const burger = document.getElementById('burger')
+    const sideNav = document.getElementById('side-nav')
+    const overlay = document.getElementById('nav-overlay')
+
+    const closeNav = () => {
+      sideNav.classList.remove('is-open')
+      overlay.classList.remove('is-open')
+    }
+
+    burger.addEventListener('click', () => {
+      sideNav.classList.toggle('is-open')
+      overlay.classList.toggle('is-open')
+    })
+    overlay.addEventListener('click', closeNav)
+    sideNav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeNav))
+
+    // Header скрытие при скролле
+    let lastY = 0
+    const header = document.querySelector('.header')
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY
+      header.style.transform = y > lastY && y > 100 ? 'translateY(-100%)' : 'translateY(0)'
+      lastY = y
+    }, { passive: true })
+
+    // VIP модалка
+    const vipModal = document.getElementById('vip-modal')
+    const vipOverlay = document.getElementById('vip-overlay')
+    const vipClose = document.getElementById('vip-close')
+
+    document.getElementById('vip-btn').onclick = () => {
+      vipModal.classList.add('is-open')
+      document.body.style.overflow = 'hidden'
+    }
+
+    const closeVip = () => {
+      vipModal.classList.remove('is-open')
+      document.body.style.overflow = ''
+    }
+
+    vipOverlay.addEventListener('click', closeVip)
+    vipClose.addEventListener('click', closeVip)
+
+    document.querySelectorAll('.vip-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.vip-tab').forEach(t => t.classList.remove('is-active'))
+        tab.classList.add('is-active')
+        document.querySelectorAll('.vip-page').forEach(p => p.style.display = 'none')
+        document.getElementById('vip-' + tab.dataset.tab).style.display = 'block'
+      })
+    })
+
+    document.querySelectorAll('.vip-switch__link').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault()
+        const target = link.dataset.goto
+        document.querySelectorAll('.vip-tab').forEach(t => {
+          t.classList.toggle('is-active', t.dataset.tab === target)
+        })
+        document.querySelectorAll('.vip-page').forEach(p => p.style.display = 'none')
+        document.getElementById('vip-' + target).style.display = 'block'
+      })
+    })
+
+    const mobRegBtn = document.getElementById('mob-register-btn')
+    if (mobRegBtn) {
+      mobRegBtn.addEventListener('click', () => {
+        document.querySelectorAll('.vip-page').forEach(p => p.style.display = 'none')
+        document.getElementById('vip-success').style.display = 'block'
+      })
+    }
+
+  })
+</script>
+
+</body>
+</html>

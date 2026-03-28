@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вина Геленджика</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { background: #0a0800; }
+
+    .scenes-wrap { height: 600vh; position: relative; }
+
+    .scenes-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .scene {
+      position: absolute;
+      inset: 0;
+      transform: translateX(100%);
+      visibility: hidden;
+      transition: transform 0s;
+    }
+    .scene.is-active { transform: translateX(0); visibility: visible; }
+    .scene.is-prev   { transform: translateX(-80px); visibility: hidden; }
+
+    .scene__bg {
+      position: absolute;
+      top: -10%; left: -15%;
+      width: 130%; height: 120%;
+      object-fit: cover;
+      will-change: transform;
+      z-index: 1;
+    }
+    .scene--3 .scene__bg { object-position: center 60%; }
+    .scene--5 .scene__bg { object-position: center 40%; }
+
+    .scene__vignette {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, transparent 25%, rgba(5,3,0,0.6) 100%);
+      z-index: 2; pointer-events: none;
+    }
+
+    .scene__content {
+      position: absolute;
+      left: 8%; top: 50%;
+      transform: translateY(-50%);
+      z-index: 10; max-width: 44%;
+    }
+    .scene--2 .scene__content,
+    .scene--4 .scene__content {
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center; max-width: 65%;
+    }
+
+    .eyebrow {
+      display: block;
+      font-family: Georgia, serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.45em;
+      color: #c9a227;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.7s 0.1s, transform 0.7s 0.1s;
+    }
+    .scene.is-active .eyebrow {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hero__title {
+      font-family: Georgia, serif;
+      font-size: clamp(2.2rem, 5vw, 5rem);
+      color: #f5ede0;
+      font-weight: 400;
+      line-height: 1.02;
+      letter-spacing: 0.04em;
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.8s 0.2s, transform 0.8s 0.2s;
+    }
+    .scene.is-active .hero__title {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hero__subtitle {
+      font-family: Georgia, serif;
+      font-style: italic;
+      font-size: clamp(0.85rem, 1.3vw, 1.1rem);
+      color: rgba(245, 237, 224, 0.55);
+      letter-spacing: 0.05em;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 0.8s 0.35s, transform 0.8s 0.35s;
+    }
+    .scene.is-active .hero__subtitle {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hero__quote {
+      font-family: Georgia, serif;
+      font-size: clamp(1.5rem, 3vw, 2.8rem);
+      color: #c9a227; letter-spacing: 0.08em;
+      text-shadow: 0 2px 30px rgba(201,162,39,0.4);
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.8s, transform 0.8s;
+    }
+    .scene.is-active .hero__quote { opacity: 1; transform: translateY(0); }
+
+    .scene__divider {
+      width: 40px;
+      height: 1px;
+      background: #c9a227;
+      margin: 1rem 0;
+      opacity: 0;
+      transition: opacity 0.8s 0.3s, width 0.8s 0.3s;
+    }
+    .scene.is-active .scene__divider {
+      opacity: 1;
+      width: 60px;
+    }
+
+    .scene-text--right {
+      left: auto !important;
+      right: 8%;
+      text-align: right;
+    }
+    .scene-text--right .scene__divider {
+      margin-left: auto;
+    }
+
+    .scene--1 .scene__bottle {
+      position: absolute;
+      bottom: 0;
+      right: 8%;
+      height: 72vh;
+      width: auto;
+      z-index: 3;
+    }
+
+    .scene--3 .scene__bottle {
+      position: absolute;
+      bottom: 0;
+      left: 8%;
+      height: 72vh;
+      width: auto;
+      z-index: 3;
+    }
+
+    .scene--5 .scene__bottle {
+      position: absolute;
+      bottom: 0;
+      right: 12%;
+      height: 82vh;
+      width: auto;
+      z-index: 3;
+    }
+
+.cta {
+      display: inline-block; margin-top: 1.5rem;
+      border: 1px solid #c9a227; color: #c9a227;
+      background: transparent; padding: 12px 34px;
+      letter-spacing: 0.2em; font-size: 0.68rem;
+      font-family: Georgia, serif; text-transform: uppercase;
+      cursor: pointer; transition: all 0.3s;
+    }
+    .cta:hover { background: #c9a227; color: #0a0800; }
+
+    .scene__story {
+      font-family: Georgia, serif;
+      font-size: clamp(0.82rem, 1.1vw, 0.95rem);
+      color: rgba(245, 237, 224, 0.82);
+      line-height: 1.9;
+      margin-top: 1.2rem;
+      letter-spacing: 0.02em;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 1s 0.5s, transform 1s 0.5s;
+    }
+    .scene.is-active .scene__story {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      pointer-events: none;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      animation: grain 0.5s steps(2) infinite;
+    }
+    @keyframes grain {
+      0%   { transform: translate(0, 0); }
+      25%  { transform: translate(-2%, -3%); }
+      50%  { transform: translate(3%, 2%); }
+      75%  { transform: translate(-1%, 3%); }
+      100% { transform: translate(2%, -1%); }
+    }
+
+    .site-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 3rem;
+      background: linear-gradient(to bottom, rgba(5,3,0,0.7) 0%, transparent 100%);
+      transition: background 0.4s;
+    }
+
+    .site-header__nav {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+    }
+
+    .site-header__link {
+      font-family: Georgia, serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      color: rgba(245,237,224,0.75);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .site-header__link:hover {
+      color: #c9a227;
+    }
+
+    .site-header__link--cta {
+      border: 1px solid #c9a227;
+      color: #c9a227;
+      padding: 8px 20px;
+      letter-spacing: 0.15em;
+    }
+
+    .site-header__link--cta:hover {
+      background: #c9a227;
+      color: #0a0800;
+    }
+
+    .scene--2__content {
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      max-width: 60%;
+    }
+
+    .scene__bg-text {
+      position: absolute;
+      top: 8%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: Georgia, serif;
+      font-size: clamp(0.7rem, 1vw, 0.85rem);
+      color: rgba(255, 255, 255, 0.45);
+      letter-spacing: 0.6em;
+      pointer-events: none;
+      z-index: 3;
+      white-space: nowrap;
+      user-select: none;
+      text-transform: uppercase;
+    }
+
+    .scene__mid-title {
+      font-family: Georgia, serif;
+      font-size: clamp(1.8rem, 3.5vw, 3rem);
+      color: #f5ede0;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      margin-top: 0.2rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s 0.2s, transform 0.8s 0.2s;
+    }
+
+    .scene.is-active .scene__mid-title {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .scene--2 .eyebrow {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .scene--2 .scene__story {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: clamp(0.85rem, 1.3vw, 1rem);
+    }
+
+    .scene--4__content {
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      max-width: 58%;
+    }
+
+    .scene__detail {
+      font-family: Georgia, serif;
+      font-size: 0.65rem;
+      color: rgba(255, 255, 255, 0.35);
+      letter-spacing: 0.15em;
+      line-height: 2.2;
+      margin-top: 1.8rem;
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 1s 0.7s, transform 1s 0.7s;
+    }
+
+    .scene.is-active .scene__detail {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .scene--4 .scene__mid-title {
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      color: #f5ede0;
+    }
+
+    .scene--4 .eyebrow {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .scene--4 .scene__story {
+      color: rgba(255, 255, 255, 0.72);
+    }
+
+    .scene--4 .scene__divider {
+      margin: 1rem auto;
+    }
+
+    .hero__title, .scene__mid-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 300;
+      font-style: normal;
+      letter-spacing: 0.08em;
+    }
+
+    .hero__subtitle, .scene__story {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 300;
+      font-style: normal;
+      font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+      color: rgba(245, 237, 224, 0.9);
+      line-height: 2;
+      letter-spacing: 0.04em;
+    }
+
+    .eyebrow, .scene__detail {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      letter-spacing: 0.35em;
+      font-size: 0.62rem;
+    }
+
+    .cta {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      letter-spacing: 0.25em;
+    }
+
+    .site-header__link {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+    }
+
+    .scene--4 .scene__mid-title {
+      font-weight: 300;
+    }
+
+    .scene--1 .scene__story,
+    .scene--3 .scene__story,
+    .scene--5 .scene__story {
+      font-style: normal;
+    }
+
+    .scene--2 .scene__story,
+    .scene--4 .scene__story {
+      font-style: normal;
+    }
+
+    .scene--4 .scene__story {
+      color: rgba(245, 237, 224, 0.88);
+      font-size: clamp(1rem, 1.4vw, 1.15rem);
+      line-height: 2.1;
+    }
+
+    .scene--4 .scene__detail {
+      color: rgba(245, 237, 224, 0.35);
+      margin-top: 2rem;
+    }
+
+    .scene--2 .scene__mid-title {
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+    }
+
+    .scene-counter {
+      position: fixed;
+      bottom: 2rem;
+      right: 2.5rem;
+      z-index: 50;
+      font-family: Georgia, serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: rgba(201,162,39,0.7);
+    }
+
+    /* VIP Trigger */
+    .vip-trigger {
+      position: fixed;
+      bottom: 2rem; left: 2.5rem;
+      z-index: 50;
+      display: flex; align-items: center; gap: 0.5rem;
+      background: rgba(14,10,6,0.85);
+      border: 1px solid rgba(201,162,39,0.35);
+      border-radius: 50px;
+      padding: 10px 20px;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      box-shadow: 0 0 20px rgba(201,162,39,0.1);
+    }
+    .vip-trigger:hover {
+      border-color: rgba(201,162,39,0.7);
+      box-shadow: 0 0 40px rgba(201,162,39,0.25);
+      transform: translateY(-2px);
+    }
+    .vip-trigger__crown { color: #c9a227; font-size: 0.9rem; }
+    .vip-trigger__text {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.58rem; letter-spacing: 0.3em;
+      color: #c9a227;
+    }
+
+    /* VIP Modal */
+    .vip-modal {
+      position: fixed; inset: 0; z-index: 500;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.4s;
+    }
+    .vip-modal.is-open { opacity: 1; pointer-events: all; }
+    .vip-modal__overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(12px);
+    }
+    .vip-modal__panel {
+      position: relative; z-index: 1;
+      width: 90%; max-width: 460px;
+      max-height: 90vh; overflow-y: auto;
+      background: rgba(18,10,4,0.92);
+      border-radius: 28px;
+      backdrop-filter: blur(40px);
+      padding: 2.5rem;
+      transform: translateY(24px) scale(0.97);
+      transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+      box-shadow:
+        0 0 0 1px rgba(201,162,39,0.2),
+        0 40px 100px rgba(0,0,0,0.7),
+        inset 0 1px 0 rgba(201,162,39,0.12),
+        0 0 80px rgba(120,40,10,0.12) inset;
+    }
+    .vip-modal__panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 28px;
+      background: url('img/vineyard-modal-bg.png') center/cover no-repeat;
+      opacity: 0.08;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .vip-modal__panel > * {
+      position: relative;
+      z-index: 1;
+    }
+    .vip-modal.is-open .vip-modal__panel { transform: translateY(0) scale(1); }
+    .vip-modal__close {
+      position: absolute; top: 1.5rem; right: 1.5rem;
+      background: none; border: none;
+      color: rgba(245,237,224,0.35); cursor: pointer;
+      transition: color 0.3s;
+    }
+    .vip-modal__close:hover { color: #f5ede0; }
+    .vip-modal__logo {
+      display: flex; align-items: center;
+      justify-content: center; gap: 0.8rem;
+      margin-bottom: 0.5rem;
+    }
+    .vip-modal__crown { color: #c9a227; font-size: 1.4rem; }
+    .vip-modal__brand {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.6rem; letter-spacing: 0.45em; color: #c9a227;
+    }
+    .vip-modal__divider {
+      width: 40px; height: 1px;
+      background: #c9a227; margin: 0.8rem auto 1.5rem; opacity: 0.5;
+    }
+    .vip-tabs {
+      display: flex; gap: 0;
+      border: 1px solid rgba(201,162,39,0.15);
+      border-radius: 12px; overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+    .vip-tab {
+      flex: 1;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.58rem; letter-spacing: 0.2em;
+      background: none; border: none;
+      color: rgba(245,237,224,0.4);
+      padding: 10px; cursor: pointer; transition: all 0.3s;
+    }
+    .vip-tab.is-active { background: rgba(201,162,39,0.1); color: #c9a227; }
+    .vip-subtitle {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.9rem; line-height: 1.7;
+      color: rgba(245,237,224,0.5);
+      text-align: center; margin-bottom: 1.5rem;
+    }
+    .vip-perks {
+      display: flex; flex-direction: column; gap: 0.8rem;
+      margin-bottom: 1.5rem; padding: 1rem;
+      background: rgba(201,162,39,0.03);
+      border: 1px solid rgba(201,162,39,0.1);
+      border-radius: 16px;
+    }
+    .vip-perk { display: flex; align-items: flex-start; gap: 0.8rem; }
+    .vip-perk__icon { color: #c9a227; font-size: 0.7rem; margin-top: 3px; flex-shrink: 0; }
+    .vip-perk__title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.9rem; letter-spacing: 0.03em; margin-bottom: 0.1rem;
+    }
+    .vip-perk__desc {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.52rem; letter-spacing: 0.12em;
+      color: rgba(245,237,224,0.4);
+    }
+    .vip-fields { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1rem; }
+    .vip-field { display: flex; flex-direction: column; gap: 0.3rem; }
+    .vip-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.52rem; letter-spacing: 0.22em;
+      color: rgba(245,237,224,0.4);
+    }
+    .vip-input {
+      background: transparent; border: none;
+      border-bottom: 1px solid rgba(201,162,39,0.2);
+      color: #f5ede0;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1rem; padding: 8px 0;
+      transition: border-color 0.3s; width: 100%;
+    }
+    .vip-input:focus { outline: none; border-bottom-color: rgba(201,162,39,0.6); }
+    .vip-input::placeholder { color: rgba(245,237,224,0.18); }
+    .vip-forgot {
+      display: block; text-align: right;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.52rem; letter-spacing: 0.15em;
+      color: rgba(201,162,39,0.5); text-decoration: none;
+      margin-bottom: 1.2rem; transition: color 0.3s;
+    }
+    .vip-forgot:hover { color: #c9a227; }
+    .vip-btn {
+      width: 100%;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.6rem; letter-spacing: 0.28em;
+      border: 1px solid rgba(201,162,39,0.6);
+      color: #c9a227; background: rgba(201,162,39,0.06);
+      padding: 14px; cursor: pointer; border-radius: 12px;
+      transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      box-shadow: 0 0 20px rgba(201,162,39,0.08);
+      margin-bottom: 1rem;
+    }
+    .vip-btn:hover {
+      background: #c9a227; color: #0e0a06;
+      box-shadow: 0 0 40px rgba(201,162,39,0.3);
+      transform: translateY(-1px);
+    }
+    .vip-switch {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.52rem; letter-spacing: 0.15em;
+      color: rgba(245,237,224,0.3); text-align: center;
+    }
+    .vip-switch__link {
+      color: rgba(201,162,39,0.7); text-decoration: none; transition: color 0.3s;
+    }
+    .vip-switch__link:hover { color: #c9a227; }
+    .vip-success { text-align: center; padding: 1rem 0; }
+    .vip-success__circle {
+      width: 72px; height: 72px; border-radius: 50%;
+      border: 1px solid rgba(201,162,39,0.4);
+      background: rgba(201,162,39,0.06);
+      box-shadow: 0 0 40px rgba(201,162,39,0.2);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 1.5rem; color: #c9a227;
+    }
+    .vip-success__title {
+      font-size: 1.6rem; font-weight: 300;
+      letter-spacing: 0.06em; line-height: 1.2; margin-bottom: 0.5rem;
+    }
+    .vip-success__text {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 0.9rem; line-height: 2;
+      color: rgba(245,237,224,0.5); margin-bottom: 1rem;
+    }
+    .vip-success__member {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.55rem; letter-spacing: 0.25em;
+      color: #c9a227; margin-bottom: 0.4rem;
+    }
+    .vip-success__brand {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.5rem; letter-spacing: 0.35em;
+      color: rgba(245,237,224,0.25);
+    }
+  @media (max-width: 768px) {
+
+  .desktop-only {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* HEADER */
+  .site-header {
+    padding: 1rem 1.2rem;
+    background: rgba(10,5,0,0.95);
+  }
+  .site-header__nav {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  /* Бургер — золотой, заметный */
+  .burger {
+    display: flex !important;
+    position: fixed !important;
+    top: 1.2rem !important;
+    right: 1.2rem !important;
+    z-index: 100 !important;
+    background: rgba(10,5,0,0.8) !important;
+    border: 1px solid rgba(201,162,39,0.4) !important;
+    border-radius: 8px !important;
+    padding: 8px 10px !important;
+    gap: 5px !important;
+    backdrop-filter: blur(10px) !important;
+  }
+  .burger__line {
+    width: 22px !important;
+    height: 1px !important;
+    background: #c9a227 !important;
+  }
+
+  /* Убираем обрезку текста */
+  .scene__story {
+    font-size: 0.75rem !important;
+    line-height: 1.6 !important;
+    display: block !important;
+    -webkit-line-clamp: unset !important;
+    overflow: visible !important;
+  }
+
+  /* Текст — левая часть экрана */
+  .scene__content {
+    left: 1.2rem !important;
+    right: 45% !important;
+    max-width: 55% !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    bottom: auto !important;
+    text-align: left !important;
+  }
+
+  /* Заголовок меньше чтобы больше места тексту */
+  .hero__title {
+    font-size: clamp(1.8rem, 9vw, 2.8rem) !important;
+    line-height: 1 !important;
+    margin-bottom: 0.3rem !important;
+  }
+
+  .scene__mid-title {
+    font-size: clamp(1.6rem, 8vw, 2.4rem) !important;
+  }
+
+  /* Подзаголовок компактнее */
+  .hero__subtitle {
+    font-size: 0.78rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .scene__divider {
+    margin: 0.5rem 0 !important;
+    width: 30px !important;
+  }
+
+  .eyebrow {
+    margin-bottom: 0.4rem !important;
+    font-size: 0.48rem !important;
+  }
+
+  /* Бутылка — полностью видимая, справа */
+  .scene__bottle {
+    height: 50vh !important;
+    right: 0 !important;
+    left: auto !important;
+    bottom: 0 !important;
+    opacity: 1 !important;
+    transform: none !important;
+    z-index: 3 !important;
+  }
+
+  .scene--3 .scene__bottle {
+    right: 0 !important;
+    left: auto !important;
+    transform: none !important;
+  }
+
+  .scene--5 .scene__bottle {
+    height: 45vh !important;
+    right: 0 !important;
+    transform: none !important;
+  }
+
+  /* Центральные сцены 2 и 4 */
+  .scene--2__content,
+  .scene--4__content {
+    top: 50% !important;
+    bottom: auto !important;
+    transform: translateY(-50%) !important;
+    text-align: center !important;
+  }
+
+  /* Счётчик и VIP */
+  .scene-counter {
+    bottom: 1.5rem !important;
+    right: 1.2rem !important;
+    font-size: 0.6rem !important;
+  }
+  .vip-trigger {
+    bottom: 1.5rem !important;
+    left: 1.2rem !important;
+    padding: 8px 14px !important;
+  }
+  .vip-trigger__text { font-size: 0.52rem !important; }
+
+  /* VIP модалка — не на весь экран */
+  .vip-modal {
+    align-items: flex-end !important;
+    padding: 0 !important;
+  }
+  .vip-modal__panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 85vh !important;
+    min-height: unset !important;
+    border-radius: 20px 20px 0 0 !important;
+    padding: 2rem 1.5rem !important;
+    overflow-y: auto !important;
+  }
+
+  .product-modal__panel {
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 95vh !important;
+    border-radius: 20px 20px 0 0 !important;
+    padding: 2rem 1.5rem !important;
+    gap: 1rem !important;
+  }
+  .product-modal {
+    align-items: flex-end !important;
+  }
+  .product-modal__img-wrap {
+    width: 100% !important;
+    height: 180px !important;
+  }
+  .product-modal__img { height: 160px !important; }
+  .product-modal__footer {
+    flex-wrap: wrap !important;
+    gap: 0.8rem !important;
+  }
+
+  .checkout-modal__panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 100vh !important;
+    border-radius: 0 !important;
+    padding: 2rem 1.5rem !important;
+  }
+  .checkout-modal {
+    align-items: flex-end !important;
+  }
+
+  /* Мобильное меню — красивое */
+  .mobile-nav {
+    z-index: 90 !important;
+  }
+  .mobile-nav__link {
+    font-size: 1.8rem !important;
+    letter-spacing: 0.08em !important;
+  }
+
+  /* Отключить тяжёлый blur на мобилке */
+  .site-header,
+  .vip-trigger,
+  .vip-modal__panel,
+  .product-modal__panel,
+  .checkout-modal__panel {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Сцена 4 — текст читабельнее */
+  .scene--4 .scene__story {
+    color: rgba(245,237,224,0.95) !important;
+    font-size: 0.8rem !important;
+  }
+  .scene--4 .scene__mid-title {
+    font-size: clamp(1.4rem,7vw,2rem) !important;
+  }
+
+  /* Бургер поверх всего */
+  .burger {
+    position: fixed !important;
+    top: 1rem !important;
+    right: 1rem !important;
+    z-index: 999 !important;
+  }
+
+  /* Мобильное меню поверх всего */
+  .mobile-nav {
+    z-index: 998 !important;
+    position: fixed !important;
+  }
+
+  /* Хедер фон без blur */
+  .site-header {
+    background: rgba(10,5,0,0.98) !important;
+  }
+
+  /* VIP модалка без blur */
+  .vip-modal__panel {
+    background: rgba(14,8,2,0.99) !important;
+  }
+
+  /* Grain отключить на мобилке — жрёт CPU */
+  .grain {
+    display: none !important;
+  }
+
+  /* Ambient breathing отключить на мобилке */
+  .scene__bg {
+    animation: none !important;
+    will-change: auto !important;
+  }
+
+  /* Фон — чтобы не обрезался */
+  .scene__bg {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+  }
+
+  /* Анимации бутылок на мобилке — включить принудительно */
+  .scene__bottle {
+    transition: opacity 0.8s, transform 0.8s !important;
+  }
+}
+
+/* Бургер — скрыт на десктопе */
+.burger { display: none; }
+.mobile-nav { display: flex; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="site-header__logo">
+      <svg width="140" height="44" viewBox="0 0 140 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Амфора -->
+        <path d="M16 6 Q14 6 13 8 Q11 10 12 13 Q10 13 9 15 Q8 18 10 20 Q11 28 14 33 Q16 37 20 38 Q24 37 26 33 Q29 28 30 20 Q32 18 31 15 Q30 13 28 13 Q29 10 27 8 Q26 6 24 6 Z" stroke="#c9a227" stroke-width="1.1" fill="none"/>
+        <!-- Горлышко -->
+        <line x1="16" y1="6" x2="24" y2="6" stroke="#c9a227" stroke-width="1.1"/>
+        <line x1="15" y1="4" x2="25" y2="4" stroke="#c9a227" stroke-width="1.1"/>
+        <!-- Ручки -->
+        <path d="M12 13 Q7 14 7 19 Q7 24 12 24" stroke="#c9a227" stroke-width="1.1" fill="none"/>
+        <path d="M28 13 Q33 14 33 19 Q33 24 28 24" stroke="#c9a227" stroke-width="1.1" fill="none"/>
+        <!-- Декор линия -->
+        <line x1="11" y1="22" x2="29" y2="22" stroke="#c9a227" stroke-width="0.6" opacity="0.5"/>
+        <!-- Текст -->
+        <text x="44" y="24" font-family="Georgia, serif" font-size="17" fill="#f5ede0" letter-spacing="4">GETAP</text>
+        <text x="44" y="34" font-family="Georgia, serif" font-size="7" fill="#c9a227" letter-spacing="5">WINERY</text>
+      </svg>
+    </div>
+    <nav class="site-header__nav desktop-only">
+      <a class="site-header__link" href="#" data-scene="0">История</a>
+      <a class="site-header__link" href="#" data-scene="1">Сомелье</a>
+      <a class="site-header__link" href="#" data-scene="2">Коллекция</a>
+      <a class="site-header__link site-header__link--cta" href="shop.html" data-scene="4">В магазин →</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Меню">
+      <span class="burger__line"></span>
+      <span class="burger__line"></span>
+      <span class="burger__line"></span>
+    </button>
+  </header>
+  <nav class="mobile-nav" id="mobile-nav">
+    <a class="mobile-nav__link" href="#" data-scene="0" onclick="closeMobileNav()">История</a>
+    <a class="mobile-nav__link" href="#" data-scene="1" onclick="closeMobileNav()">Сомелье</a>
+    <a class="mobile-nav__link" href="#" data-scene="2" onclick="closeMobileNav()">Коллекция</a>
+    <a class="mobile-nav__cta" href="shop.html">В магазин →</a>
+  </nav>
+
+  <div class="scenes-wrap">
+    <div class="scenes-sticky">
+
+      <div class="scene scene--1 is-active">
+        <img class="scene__bg" src="img/bg1.png" alt="" />
+        <img class="scene__bottle" src="img/bottle1.png">
+        <div class="scene__vignette"></div>
+        <div class="scene__content">
+          <span class="eyebrow">GETAP WINERY · ОСНОВАНО В 2018</span>
+          <h1 class="hero__title">ВИНА<br>ГЕЛЕНДЖИКА</h1>
+          <div class="scene__divider"></div>
+          <p class="hero__subtitle">Природа. Традиции. Искусство.</p>
+          <p class="scene__story">
+            Там, где Кавказские горы спускаются к Чёрному морю,<br>
+            на высоте 400 метров над уровнем моря — здесь рождается<br>
+            наше вино. Солёный бриз, горное солнце и вулканическая почва<br>
+            создают терруар, который невозможно воспроизвести нигде в мире.<br>
+            Каждая лоза выращена вручную. Каждый урожай — событие.
+          </p>
+        </div>
+      </div>
+
+      <div class="scene scene--2">
+        <img class="scene__bg" src="img/wine-flow-1.png">
+        <div class="vignette"></div>
+
+        <!-- Огромный фоновый текст -->
+        <div class="scene__bg-text">· GETAP WINERY · GELENDZHIK ·</div>
+
+        <!-- Контент поверх -->
+        <div class="scene__content scene--2__content">
+          <span class="eyebrow">GETAP WINERY · АРМЕНИЯ</span>
+          <h2 class="scene__mid-title">Шесть тысяч<br>лет традиций</h2>
+          <p class="scene__story">
+            Армения — родина вина. Здесь, в пещере Арени,<br>
+            найден древнейший винодельческий комплекс мира.<br>
+            Getap продолжает эту историю — на берегу Чёрного моря.
+          </p>
+        </div>
+      </div>
+
+      <div class="scene scene--3">
+        <img class="scene__bg" src="img/bg2.png" alt="" />
+        <img class="scene__bottle" src="img/bottle2.png">
+        <div class="scene__vignette"></div>
+        <div class="scene__content scene-text--right">
+          <span class="eyebrow">GRAN RESERVA · ЛИМИТИРОВАННЫЙ ТИРАЖ 2024</span>
+          <h1 class="hero__title">CHATEAU<br>LAURENT</h1>
+          <div class="scene__divider"></div>
+          <p class="hero__subtitle">Cabernet Sauvignon · Napa Valley</p>
+          <p class="scene__story">
+            Выдержан 18 месяцев в новых французских бочках из дуба Аллье.<br>
+            Бархатистый танин, нотки тёмной вишни, табака и восточных специй.<br>
+            Ручной сбор. Ручная сортировка. Без компромиссов.<br>
+            Производится не более 3 000 бутылок в год —<br>
+            для тех, кто понимает разницу между вином и искусством.
+          </p>
+        </div>
+      </div>
+
+      <div class="scene scene--4">
+        <img class="scene__bg" src="img/wine-flow-2.png">
+        <div class="vignette"></div>
+
+        <div class="scene__bg-text">· GETAP WINERY · GELENDZHIK ·</div>
+
+        <div class="scene__content scene--4__content">
+          <span class="eyebrow">GETAP WINERY · ТЕРРУАР</span>
+          <h2 class="scene__mid-title">Вино — это<br>закат в бокале</h2>
+          <div class="scene__divider"></div>
+          <p class="scene__story">
+            Каждый глоток — это память о месте.<br>
+            О солёном ветре с моря, о рассветах над виноградником,<br>
+            о руках мастера, собравшего этот урожай вручную.<br>
+            Getap — это не просто вино.<br>
+            Это эмоция, бережно разлитая по бутылкам.
+          </p>
+          <p class="scene__detail">
+            Высота виноградников · 400 м над уровнем моря<br>
+            Терруар · вулканические почвы · черноморский климат<br>
+            Урожай · ручной сбор · сентябрь — октябрь
+          </p>
+        </div>
+      </div>
+
+      <div class="scene scene--5">
+        <img class="scene__bg" src="img/table-bg.png" alt="" />
+        <div class="scene__vignette"></div>
+        <div class="scene__content">
+          <span class="eyebrow">АВТОРСКАЯ КОЛЛЕКЦИЯ · ПРЯМЫЕ ПОСТАВКИ</span>
+          <h1 class="hero__title">ВИНА<br>ГЕЛЕНДЖИКА</h1>
+          <div class="scene__divider"></div>
+          <p class="scene__story">
+            Мы не работаем с посредниками. Только прямые поставки<br>
+            от виноградника до вашего стола. Каждая бутылка<br>
+            пронумерована и сопровождается сертификатом подлинности.<br>
+            Это не просто вино — это кусочек черноморского побережья,<br>
+            запечатанный для вашего особенного вечера.
+          </p>
+          <a class="cta" href="shop.html">Открыть коллекцию →</a>
+        </div>
+        <img class="scene__bottle" src="img/bottle.png" alt="" />
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script>
+    function closeMobileNav() {
+      const nav = document.getElementById('mobile-nav')
+      if (nav) nav.classList.remove('is-open')
+      document.body.style.overflow = ''
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+    if (window.innerWidth <= 768) {
+      window.location.replace('mobile.html')
+    }
+    // Убрать десктопную навигацию на мобилке
+    if (window.innerWidth <= 768) {
+      const desktopNav = document.querySelector('.site-header__nav')
+      if (desktopNav) desktopNav.remove()
+    }
+
+    const SCENE_COUNT = 5;
+    const INERTIA = 0.05;
+    const scenes = document.querySelectorAll('.scene');
+    const wrap   = document.querySelector('.scenes-wrap');
+    let scrollY = 0, smoothY = 0, currentScene = -1;
+
+    const animators = [
+      (lp, bg) => gsap.set(bg, { xPercent: -2 + lp * 4, scale: 1.04 - lp * 0.02 }),
+      (lp, bg) => gsap.set(bg, { xPercent: lp * 3,       scale: 1.06 - lp * 0.04 }),
+      (lp, bg) => gsap.set(bg, { xPercent: 4 - lp * 8,  scale: 1.04 }),
+      (lp, bg) => gsap.set(bg, { xPercent: -lp * 3,      scale: 1.08 - lp * 0.06 }),
+      (lp, bg) => gsap.set(bg, { xPercent: -2 + lp * 2, scale: 1.05 - lp * 0.03 }),
+    ];
+
+    const activateScene = (idx) => {
+      if (idx === currentScene) return;
+      scenes.forEach((s, i) => {
+        s.classList.remove('is-active', 'is-prev');
+        if (i === idx) s.classList.add('is-active');
+        if (i < idx)   s.classList.add('is-prev');
+      });
+      currentScene = idx;
+      const counter = document.querySelector('.scene-counter__current')
+      if (counter) counter.textContent = String(idx + 1).padStart(2, '0')
+      if (idx === 0) {
+        gsap.from('.scene--1 .scene__content', { x: -80, opacity: 0, duration: 1, ease: 'power3.out' });
+        gsap.from('.scene--1 .scene__bottle',  { x: 80,  opacity: 0, duration: 1, ease: 'power3.out', delay: 0.1 });
+      }
+      if (idx === 2) {
+        gsap.from('.scene--3 .scene__bottle',  { x: -80, opacity: 0, duration: 1, ease: 'power3.out' });
+        gsap.from('.scene--3 .scene__content', { x: 80,  opacity: 0, duration: 1, ease: 'power3.out', delay: 0.1 });
+      }
+      if (idx === 4) {
+        gsap.from('.scene--5 .scene__content', { x: -80, opacity: 0, duration: 1, ease: 'power3.out' });
+gsap.from('.scene--5 .scene__bottle',  { x: 80,  opacity: 0, duration: 1, ease: 'power3.out', delay: 0.1 });
+      }
+      // Анимации при смене сцены на мобилке
+      if (window.innerWidth <= 768) {
+        const bottle = scenes[idx]?.querySelector('.scene__bottle')
+        const content = scenes[idx]?.querySelector('.scene__content')
+        if (bottle) {
+          gsap.fromTo(bottle,
+            { x: 80, opacity: 0 },
+            { x: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }
+          )
+        }
+        if (content) {
+          gsap.fromTo(content,
+            { x: -50, opacity: 0 },
+            { x: 0, opacity: 1, duration: 0.8, ease: 'power3.out', delay: 0.1 }
+          )
+        }
+      }
+    };
+
+    const tick = () => {
+      smoothY += (scrollY - smoothY) * INERTIA;
+
+      // Притяжение к границам сцен
+      const total = wrap.offsetHeight - window.innerHeight;
+      const sceneH = total / SCENE_COUNT;
+      const rawScene = smoothY / sceneH;
+      const nearestScene = Math.round(rawScene);
+      const distToNearest = Math.abs(rawScene - nearestScene);
+
+      if (distToNearest < 0.15 && Math.abs(scrollY - smoothY) < 2) {
+        const snapY = nearestScene * sceneH;
+        smoothY += (snapY - smoothY) * 0.08;
+      }
+
+      const progress = Math.min(smoothY / total, 1);
+      const raw      = progress * SCENE_COUNT;
+      const idx      = Math.min(Math.floor(raw), SCENE_COUNT - 1);
+      const lp       = raw - Math.floor(raw);
+      activateScene(idx);
+      scenes.forEach((scene, i) => {
+        const bg = scene.querySelector('.scene__bg');
+        if (!bg || !animators[i]) return;
+        const local = i < idx ? 1 : i > idx ? 0 : lp;
+        animators[i](local, bg);
+      });
+      requestAnimationFrame(tick);
+    };
+
+    window.addEventListener('scroll', () => {
+      scrollY = Math.max(0, -wrap.getBoundingClientRect().top)
+    }, { passive: true })
+
+    document.addEventListener('mousemove', e => {
+      const x = e.clientX / window.innerWidth  - 0.5;
+      const y = e.clientY / window.innerHeight - 0.5;
+      gsap.to('.scene.is-active .scene__bottle, .scene.is-active .scene__glass',
+        { x: x * 25, y: y * (-12), duration: 1.8, ease: 'power2.out' });
+    });
+
+    tick();
+
+    const goToScene = (idx) => {
+      const total = wrap.offsetHeight - window.innerHeight
+      const sceneH = total / (SCENE_COUNT - 1)
+      window.scrollTo({ top: idx * sceneH, behavior: 'smooth' })
+    }
+
+    document.querySelector('a[data-scene="0"]')?.addEventListener('click', e => { e.preventDefault(); goToScene(0) })
+    document.querySelector('a[data-scene="1"]')?.addEventListener('click', e => { e.preventDefault(); goToScene(1) })
+    document.querySelector('a[data-scene="2"]')?.addEventListener('click', e => { e.preventDefault(); goToScene(2) })
+    document.querySelector('a[data-scene="4"]')?.addEventListener('click', e => { e.preventDefault(); goToScene(4) })
+
+    document.querySelectorAll('.scene__bg').forEach((bg, i) => {
+      gsap.to(bg, {
+        scale: '+=0.015',
+        duration: 8 + i * 1.5,
+        ease: 'sine.inOut',
+        repeat: -1,
+        yoyo: true
+      })
+    })
+
+    // VIP Club
+    const vipModal = document.getElementById('vip-modal')
+
+    document.getElementById('vip-trigger').addEventListener('click', () => {
+      vipModal.classList.add('is-open')
+      document.body.style.overflow = 'hidden'
+    })
+
+    const closeVip = () => {
+      vipModal.classList.remove('is-open')
+      document.body.style.overflow = ''
+    }
+
+    document.getElementById('vip-overlay').addEventListener('click', closeVip)
+    document.getElementById('vip-close').addEventListener('click', closeVip)
+
+    const showVipPage = (id) => {
+      document.querySelectorAll('.vip-page').forEach(p => p.style.display = 'none')
+      document.getElementById(id).style.display = 'block'
+    }
+
+    document.querySelectorAll('.vip-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.vip-tab').forEach(t => t.classList.remove('is-active'))
+        tab.classList.add('is-active')
+        showVipPage('vip-' + tab.dataset.tab)
+      })
+    })
+
+    document.querySelectorAll('.vip-switch__link').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault()
+        const target = link.dataset.goto
+        document.querySelectorAll('.vip-tab').forEach(t => {
+          t.classList.toggle('is-active', t.dataset.tab === target)
+        })
+        showVipPage('vip-' + target)
+      })
+    })
+
+    document.getElementById('vip-register-btn').addEventListener('click', () => {
+      const num = Math.floor(Math.random() * 900) + 100
+      document.getElementById('vip-member-num').textContent = num
+      showVipPage('vip-success')
+      document.querySelectorAll('.vip-tab').forEach(t => t.style.display = 'none')
+    })
+    const burger = document.getElementById('burger')
+    const mobileNav = document.getElementById('mobile-nav')
+
+    if (burger) {
+      burger.addEventListener('click', () => {
+        mobileNav.classList.toggle('is-open')
+        document.body.style.overflow =
+          mobileNav.classList.contains('is-open') ? 'hidden' : ''
+      })
+    }
+
+    mobileNav?.querySelectorAll('.mobile-nav__link').forEach(link => {
+      link.addEventListener('click', () => {
+        const idx = +link.dataset.scene
+        if (!isNaN(idx)) goToScene(idx)
+        closeMobileNav()
+      })
+    })
+
+    }) // end DOMContentLoaded
+  </script>
+
+  <div class="grain"></div>
+  <div class="scene-counter">
+    <span class="scene-counter__current">01</span>
+    <span class="scene-counter__sep"> / </span>
+    <span class="scene-counter__total">05</span>
+  </div>
+
+  <!-- VIP Club кнопка -->
+  <button class="vip-trigger" id="vip-trigger">
+    <span class="vip-trigger__crown">♛</span>
+    <span class="vip-trigger__text">VIP</span>
+  </button>
+
+  <!-- VIP Modal -->
+  <div class="vip-modal" id="vip-modal">
+    <div class="vip-modal__overlay" id="vip-overlay"></div>
+    <div class="vip-modal__panel">
+
+      <button class="vip-modal__close" id="vip-close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+
+      <div class="vip-modal__logo">
+        <span class="vip-modal__crown">♛</span>
+        <span class="vip-modal__brand">GETAP PRIVATE CLUB</span>
+      </div>
+      <div class="vip-modal__divider"></div>
+
+      <div class="vip-tabs">
+        <button class="vip-tab is-active" data-tab="login">Войти</button>
+        <button class="vip-tab" data-tab="register">Стать членом</button>
+      </div>
+
+      <div class="vip-page" id="vip-login">
+        <p class="vip-subtitle">Добро пожаловать в закрытый клуб Getap</p>
+        <div class="vip-fields">
+          <div class="vip-field">
+            <label class="vip-label">Email</label>
+            <input class="vip-input" type="email" placeholder="your@email.com">
+          </div>
+          <div class="vip-field">
+            <label class="vip-label">Пароль</label>
+            <input class="vip-input" type="password" placeholder="••••••••">
+          </div>
+        </div>
+        <a class="vip-forgot" href="#">Забыли пароль?</a>
+        <button class="vip-btn">Войти в клуб</button>
+        <p class="vip-switch">Нет аккаунта? <a href="#" class="vip-switch__link" data-goto="register">Присоединиться →</a></p>
+      </div>
+
+      <div class="vip-page" id="vip-register" style="display:none">
+        <p class="vip-subtitle">Эксклюзивный доступ к лимитированным коллекциям</p>
+        <div class="vip-perks">
+          <div class="vip-perk">
+            <span class="vip-perk__icon">◈</span>
+            <div>
+              <p class="vip-perk__title">Ранний доступ</p>
+              <p class="vip-perk__desc">Новые коллекции за 48ч до открытых продаж</p>
+            </div>
+          </div>
+          <div class="vip-perk">
+            <span class="vip-perk__icon">◈</span>
+            <div>
+              <p class="vip-perk__title">Скидка 15%</p>
+              <p class="vip-perk__desc">На все заказы навсегда</p>
+            </div>
+          </div>
+          <div class="vip-perk">
+            <span class="vip-perk__icon">◈</span>
+            <div>
+              <p class="vip-perk__title">Личный сомелье</p>
+              <p class="vip-perk__desc">Персональные рекомендации и дегустации</p>
+            </div>
+          </div>
+          <div class="vip-perk">
+            <span class="vip-perk__icon">◈</span>
+            <div>
+              <p class="vip-perk__title">Закрытые мероприятия</p>
+              <p class="vip-perk__desc">Приглашения на урожай и дегустации в Геленджике</p>
+            </div>
+          </div>
+        </div>
+        <div class="vip-fields">
+          <div class="vip-field">
+            <label class="vip-label">Имя</label>
+            <input class="vip-input" type="text" placeholder="Александр">
+          </div>
+          <div class="vip-field">
+            <label class="vip-label">Email</label>
+            <input class="vip-input" type="email" placeholder="your@email.com">
+          </div>
+          <div class="vip-field">
+            <label class="vip-label">Телефон</label>
+            <input class="vip-input" type="tel" placeholder="+7 (999) 000-00-00">
+          </div>
+          <div class="vip-field">
+            <label class="vip-label">Пароль</label>
+            <input class="vip-input" type="password" placeholder="••••••••">
+          </div>
+        </div>
+        <button class="vip-btn" id="vip-register-btn">Подать заявку</button>
+        <p class="vip-switch">Уже член клуба? <a href="#" class="vip-switch__link" data-goto="login">Войти →</a></p>
+      </div>
+
+      <div class="vip-page vip-success" id="vip-success" style="display:none">
+        <div class="vip-success__circle">♛</div>
+        <h3 class="vip-success__title">Добро пожаловать<br>в клуб</h3>
+        <div class="vip-modal__divider" style="margin:1rem auto"></div>
+        <p class="vip-success__text">
+          Ваша заявка принята.<br>
+          Персональный менеджер свяжется<br>
+          с вами в течение 24 часов.
+        </p>
+        <p class="vip-success__member">Участник № <span id="vip-member-num"></span></p>
+        <p class="vip-success__brand">GETAP PRIVATE CLUB · 2024</p>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
