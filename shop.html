@@ -27,6 +27,8 @@
       overflow-x: hidden;
     }
 
+    .mobile-header { display: none; }
+
     /* ── HEADER ── */
     .header {
       position: fixed; top:0; left:0; right:0; z-index:50;
@@ -579,12 +581,20 @@
         inset 0 -1px 0 rgba(0,0,0,0.3),
         0 0 80px rgba(120,40,10,0.15) inset;
     }
+    @media (max-width: 768px) {
+      .checkout-modal__panel {
+        transform: none !important;
+      }
+      .product-modal__panel {
+        transform: none !important;
+      }
+    }
     .checkout-modal__panel::before {
       content: '';
       position: absolute;
       top: 0; right: -60px; bottom: 0;
       width: 280px;
-      background: url('img/barrel-hero.png') center/cover no-repeat;
+      background: url('img/barrel-hero.webp') center/cover no-repeat;
       opacity: 0.06;
       border-radius: 0 24px 24px 0;
       pointer-events: none;
@@ -807,6 +817,434 @@
       font-family: 'Montserrat', sans-serif;
       font-size: 0.52rem; letter-spacing: 0.35em; color: var(--muted);
     }
+
+  @media (max-width: 768px) {
+
+    /* HEADER */
+    .header__nav {
+      display: none !important;
+    }
+    .header {
+      padding: 1rem 1.2rem;
+    }
+
+    /* Мобильный хедер */
+    .mobile-header {
+      display: flex !important;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .mobile-header__back {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.62rem; letter-spacing: 0.2em;
+      color: rgba(245,237,224,0.6);
+      text-decoration: none;
+    }
+    .mobile-header__cart {
+      position: relative;
+      background: none; border: none; cursor: pointer;
+      padding: 4px;
+    }
+    .mobile-cart-count {
+      position: absolute; top:-6px; right:-6px;
+      width:16px; height:16px; border-radius:50%;
+      background:var(--gold); color:#0e0a06;
+      font-family:'Montserrat',sans-serif;
+      font-size:0.5rem;
+      display:flex; align-items:center; justify-content:center;
+    }
+    /* Скрыть десктопный лого и nav на мобилке */
+    .header__logo { display: none !important; }
+    .header__nav { display: none !important; }
+
+    /* Модалка товара — floating по центру */
+    .product-modal {
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 1.2rem !important;
+    }
+
+    .product-modal__panel {
+      width: 100% !important;
+      max-width: 100% !important;
+      border-radius: 20px !important;
+      max-height: 86vh !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      padding: 1.8rem 1.2rem !important;
+      transform: none !important;
+      margin: 0 !important;
+      flex-direction: column !important;
+      gap: 1rem !important;
+    }
+
+    .product-modal.is-open .product-modal__panel {
+      transform: none !important;
+    }
+
+    .product-modal__img-wrap {
+      width: 100% !important;
+      height: 180px !important;
+    }
+
+    .product-modal__img {
+      height: 160px !important;
+    }
+
+    /* Checkout — floating по центру */
+    .checkout-modal {
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 1.2rem !important;
+    }
+
+    .checkout-modal__panel {
+      width: 100% !important;
+      max-width: 100% !important;
+      border-radius: 20px !important;
+      max-height: 86vh !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      padding: 1.8rem 1.2rem !important;
+      transform: none !important;
+      position: relative !important;
+      margin: 0 !important;
+    }
+
+    .checkout-modal.is-open .checkout-modal__panel {
+      transform: none !important;
+    }
+
+    .checkout-fields--row {
+      flex-direction: column !important;
+      gap: 0.8rem !important;
+    }
+
+    .checkout-fields--row .checkout-field {
+      width: 100% !important;
+    }
+
+    .checkout-modal__panel * {
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Корзина — снизу как шторка */
+    .cart {
+      width: 100% !important;
+      border-radius: 20px 20px 0 0 !important;
+      border-left: none !important;
+      border-top: 1px solid rgba(201,162,39,0.15) !important;
+      max-height: 80vh !important;
+      overflow-y: auto !important;
+    }
+
+    /* HERO */
+    .shop-hero {
+      height: 60vh;
+    }
+    .shop-hero__title {
+      font-size: clamp(2.5rem, 12vw, 4rem);
+    }
+    .shop-hero__sub {
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+    }
+
+    /* ФИЛЬТРЫ */
+    .catalog__filters {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      justify-content: flex-start;
+      padding: 1.5rem 1.2rem;
+      gap: 0.8rem;
+      -webkit-overflow-scrolling: touch;
+    }
+    .catalog__filters::-webkit-scrollbar { display: none; }
+    .filter-btn {
+      white-space: nowrap;
+      padding: 8px 16px;
+      flex-shrink: 0;
+    }
+
+    /* КАТАЛОГ */
+    .catalog {
+      padding: 2rem 1.2rem;
+    }
+    .catalog__grid {
+      grid-template-columns: 1fr;
+      gap: 1.2rem;
+    }
+
+    /* КАРТОЧКИ */
+    .wine-card__img-wrap {
+      height: 200px;
+    }
+    .wine-card__img {
+      height: 170px;
+    }
+    .wine-card__body {
+      padding: 1.2rem;
+    }
+    .wine-card__name {
+      font-size: 1.3rem;
+    }
+    .wine-card__footer {
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+    .wine-card__btn {
+      width: 100%;
+      padding: 10px;
+      text-align: center;
+    }
+
+
+    /* КОРЗИНА */
+    .cart {
+      width: 100% !important;
+      border-radius: 0 !important;
+      border-left: none !important;
+      border-top: 1px solid rgba(201,162,39,0.2) !important;
+    }
+
+    /* CHECKOUT */
+    .checkout-btns {
+      flex-direction: column !important;
+    }
+    .checkout-back {
+      width: 100% !important;
+      text-align: center !important;
+    }
+    .checkout-steps {
+      margin-bottom: 1.2rem !important;
+    }
+    .checkout-step__label {
+      font-size: 0.45rem !important;
+    }
+
+    /* FOOTER */
+    .shop-footer {
+      padding: 2rem 1.2rem !important;
+    }
+
+
+  }
+
+    /* ─── CELLAR ─── */
+    .cellar {
+      position: relative;
+      padding: 8rem 4rem;
+      overflow: hidden;
+    }
+
+    .cellar__bg-wrap {
+      position: absolute; inset: 0;
+    }
+
+    .cellar__bg {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+      filter: brightness(0.25);
+    }
+
+    .cellar__overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(14,10,6,0.8) 0%,
+        rgba(14,10,6,0.3) 50%,
+        rgba(14,10,6,0.8) 100%
+      );
+    }
+
+    .cellar__inner {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto;
+    }
+
+    .cellar__header {
+      text-align: center; margin-bottom: 4rem;
+    }
+
+    .cellar__eyebrow {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.6rem; letter-spacing: 0.45em;
+      color: var(--gold); margin-bottom: 1rem;
+    }
+
+    .cellar__title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 300; letter-spacing: 0.06em;
+      color: var(--cream);
+    }
+
+    .cellar__divider {
+      width: 50px; height: 1px;
+      background: var(--gold);
+      margin: 1.2rem auto;
+    }
+
+    .cellar__subtitle {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1rem, 1.5vw, 1.2rem);
+      color: rgba(245,237,224,0.55);
+      letter-spacing: 0.03em;
+    }
+
+    .cellar__content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      margin-bottom: 4rem;
+      align-items: center;
+    }
+
+    .cellar__desc {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+      line-height: 1.9;
+      color: rgba(245,237,224,0.75);
+    }
+
+    .cellar__stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .cellar__stat {
+      text-align: center;
+      padding: 1.5rem;
+      border: 1px solid rgba(201,162,39,0.15);
+      background: rgba(201,162,39,0.03);
+    }
+
+    .cellar__stat-num {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 300;
+      color: var(--gold);
+    }
+
+    .cellar__stat-unit {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.6rem; letter-spacing: 0.2em;
+      color: rgba(201,162,39,0.6);
+      margin-left: 0.3rem;
+    }
+
+    .cellar__stat-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.52rem; letter-spacing: 0.15em;
+      color: rgba(245,237,224,0.4);
+      margin-top: 0.5rem;
+    }
+
+    .cellar__barrel {
+      display: flex;
+      align-items: center;
+      gap: 3rem;
+      padding: 2rem;
+      border: 1px solid rgba(201,162,39,0.15);
+      background: rgba(201,162,39,0.03);
+    }
+
+    .cellar__barrel-img {
+      height: 180px; width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));
+    }
+
+    .cellar__barrel-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.4rem; font-weight: 300;
+      letter-spacing: 0.04em;
+      margin: 0.4rem 0;
+    }
+
+    .cellar__barrel-desc {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.55rem; letter-spacing: 0.18em;
+      color: rgba(245,237,224,0.4);
+    }
+
+    @media (max-width: 768px) {
+      .cellar {
+        padding: 4rem 1.2rem;
+      }
+      .cellar__content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      .cellar__barrel {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+      }
+      .cellar__barrel-img {
+        height: 140px;
+      }
+    }
+
+    /* ─── CELLAR TEASER ─── */
+    .cellar-teaser {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      padding: 2.5rem 4rem;
+      background: rgba(201,162,39,0.04);
+      border-top: 1px solid rgba(201,162,39,0.12);
+      border-bottom: 1px solid rgba(201,162,39,0.12);
+    }
+    .cellar-teaser__icon {
+      color: #c9a227;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    .cellar-teaser__text { flex: 1; }
+    .cellar-teaser__eyebrow {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.52rem; letter-spacing: 0.35em;
+      color: rgba(201,162,39,0.6);
+      margin-bottom: 0.4rem;
+    }
+    .cellar-teaser__title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1rem, 1.8vw, 1.4rem);
+      font-weight: 300; letter-spacing: 0.03em;
+      color: #f5ede0;
+    }
+    .cellar-teaser__btn {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.6rem; letter-spacing: 0.22em;
+      border: 1px solid rgba(201,162,39,0.4);
+      color: #c9a227; padding: 12px 28px;
+      text-decoration: none; flex-shrink: 0;
+      transition: all 0.3s;
+    }
+    .cellar-teaser__btn:hover {
+      background: #c9a227; color: #0a0800;
+    }
+
+    @media (max-width: 768px) {
+      .cellar-teaser {
+        flex-direction: column;
+        text-align: center;
+        padding: 2rem 1.5rem;
+        gap: 1.2rem;
+      }
+      .cellar-teaser__btn {
+        width: 100%; text-align: center;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -827,7 +1265,7 @@
     <nav class="header__nav">
       <a class="header__link" href="index.html">← Назад</a>
       <a class="header__link" href="#catalog">Каталог</a>
-      <a class="header__link" href="#about-cellar">Погреб</a>
+      <a class="header__link" href="cellar.html">Погреб</a>
       <button class="header__cart" id="cart-btn">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c9a227" stroke-width="1.5">
           <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
@@ -837,12 +1275,24 @@
         <span class="cart-count">0</span>
       </button>
     </nav>
+    <!-- Мобильный хедер -->
+    <div class="mobile-header">
+      <a class="mobile-header__back" href="index.html">← Назад</a>
+      <button class="mobile-header__cart" id="cart-btn-mobile">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c9a227" stroke-width="1.5">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        <span class="cart-count mobile-cart-count">0</span>
+      </button>
+    </div>
   </header>
 
   <!-- HERO -->
   <section class="shop-hero">
     <div class="shop-hero__bg-wrap">
-      <img class="shop-hero__bg" src="img/barrel-hero.png" alt="">
+      <img class="shop-hero__bg" src="img/barrel-hero.webp" alt="">
     </div>
     <div class="shop-hero__overlay"></div>
     <div class="shop-hero__content">
@@ -857,7 +1307,7 @@
   <!-- CATALOG -->
   <section class="catalog" id="catalog">
     <div class="catalog__cellar-bg">
-      <img class="catalog__cellar-img" src="img/cellar-bg.png" alt="">
+      <img class="catalog__cellar-img" src="img/cellar-bg.webp" alt="">
       <div class="catalog__cellar-overlay"></div>
     </div>
 
@@ -1063,6 +1513,16 @@
   </div>
   <div class="cart__overlay" id="cart-overlay"></div>
 
+  <!-- CELLAR TEASER -->
+  <div class="cellar-teaser">
+    <span class="cellar-teaser__icon">◈</span>
+    <div class="cellar-teaser__text">
+      <span class="cellar-teaser__eyebrow">GETAP WINERY · ПРОИЗВОДСТВО</span>
+      <p class="cellar-teaser__title">Узнайте как рождается каждая бутылка</p>
+    </div>
+    <a class="cellar-teaser__btn" href="cellar.html">Посетить погреб →</a>
+  </div>
+
   <!-- FOOTER -->
   <footer class="shop-footer">
     <div class="shop-footer__inner">
@@ -1187,6 +1647,8 @@
       itemsEl.querySelectorAll('.cart-item__remove').forEach(btn => {
         btn.addEventListener('click', () => { cartItems.splice(+btn.dataset.i, 1); renderCart() })
       })
+      const mobileCount = document.querySelector('.mobile-cart-count')
+      if (mobileCount) mobileCount.textContent = cartItems.length
     }
 
     document.getElementById('cart-btn').addEventListener('click', openCart)
@@ -1296,6 +1758,9 @@
     }
 
     const openCheckout = () => {
+      document.body.style.overflow = 'hidden'
+      document.body.style.position = 'fixed'
+      document.body.style.width = '100%'
       const sum = cartItems.reduce((a, b) => a + b.price, 0)
       document.getElementById('checkout-sum').textContent = sum.toLocaleString('ru-RU') + ' ₽'
       document.getElementById('checkout-sum-2').textContent = sum.toLocaleString('ru-RU') + ' ₽'
@@ -1311,6 +1776,9 @@
     }
 
     const closeCheckout = () => {
+      document.body.style.overflow = ''
+      document.body.style.position = ''
+      document.body.style.width = ''
       checkoutModal.classList.remove('is-open')
       document.body.style.overflow = ''
     }
@@ -1332,6 +1800,12 @@
     document.getElementById('ch-card')?.addEventListener('input', e => {
       e.target.value = e.target.value.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim()
     })
+    const cartBtnMobile = document.getElementById('cart-btn-mobile')
+    if (cartBtnMobile) {
+      cartBtnMobile.addEventListener('click', openCart)
+    }
+
+
     }) // end DOMContentLoaded
   </script>
 

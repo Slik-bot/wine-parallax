@@ -18,10 +18,8 @@
     * { margin:0; padding:0; box-sizing:border-box; }
     html {
       scroll-behavior: smooth;
-      scroll-snap-type: y mandatory;
-      overflow-y: scroll;
     }
-    body { background: var(--bg); color: var(--cream); font-family: 'Cormorant Garamond', Georgia, serif; overflow-x: hidden; }
+    body { background: var(--bg); color: var(--cream); font-family: 'Cormorant Garamond', Georgia, serif; overflow-x: hidden; overflow-y: scroll; }
 
     /* HEADER */
     .header {
@@ -37,15 +35,23 @@
       display: flex; align-items: center; gap: 0.5rem;
       text-decoration: none;
     }
+    .header__logo svg {
+      width: 48px !important;
+      height: 48px !important;
+    }
+
     .header__logo-text {
       font-family: 'Montserrat', sans-serif;
-      font-size: 0.7rem; letter-spacing: 0.35em;
+      font-size: 1rem;
+      letter-spacing: 0.35em;
       color: var(--cream);
     }
     .header__logo-sub {
       font-family: 'Montserrat', sans-serif;
-      font-size: 0.45rem; letter-spacing: 0.3em;
-      color: var(--gold); display: block;
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      display: block;
     }
 
     /* Бургер */
@@ -62,7 +68,9 @@
     .side-nav {
       position: fixed; top:0; right:0; bottom:0;
       width: 70vw; max-width: 280px;
-      background: rgba(10,5,0,0.99);
+      background: rgba(10,5,0,0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border-left: 1px solid rgba(201,162,39,0.15);
       z-index: 200;
       display: flex; flex-direction: column;
@@ -74,20 +82,53 @@
     }
     .side-nav.is-open { transform: translateX(0); }
     .side-nav__link {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.6rem; font-weight: 300;
-      color: var(--cream); text-decoration: none;
-      letter-spacing: 0.05em;
-      transition: color 0.3s;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 300;
+      letter-spacing: 0.25em;
+      color: #f5ede0;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.3s, opacity 0.3s;
+      opacity: 0.85;
+      padding: 4px 0;
+      border-bottom: 1px solid rgba(201,162,39,0.1);
+      width: 100%;
+      display: block;
     }
-    .side-nav__link:hover { color: var(--gold); }
+    .side-nav__link:hover {
+      color: #c9a227;
+      opacity: 1;
+    }
+
+    button.side-nav__link {
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      cursor: pointer;
+      text-align: left;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
     .side-nav__cta {
       font-family: 'Montserrat', sans-serif;
-      font-size: 0.6rem; letter-spacing: 0.25em;
-      border: 1px solid var(--gold); color: var(--gold);
-      padding: 12px 24px; text-decoration: none;
-      text-align: center; margin-top: 1rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      border: 1px solid rgba(201,162,39,0.6);
+      color: #c9a227;
+      padding: 14px 28px;
+      text-decoration: none;
+      text-align: center;
+      margin-top: 1.5rem;
       transition: all 0.3s;
+      text-transform: uppercase;
+      display: block;
+    }
+    .side-nav__cta:hover {
+      background: #c9a227;
+      color: #0a0800;
     }
     .side-nav__overlay {
       position: fixed; inset:0; z-index: 199;
@@ -96,35 +137,46 @@
     }
     .side-nav__overlay.is-open { display: block; }
 
+    /* Sticky архитектура как на десктопе */
+    .scenes-wrap {
+      height: 500vh;
+      position: relative;
+    }
+
+    .scenes-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: hidden;
+    }
+
     /* СЕКЦИИ */
     .scene {
-      position: relative;
-      min-height: 100vh;
-      overflow: hidden;
-      display: flex; flex-direction: column;
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      display: flex;
+      flex-direction: column;
       justify-content: flex-start;
       padding: 5rem 1.5rem 2rem;
-      scroll-snap-align: start;
-      scroll-snap-stop: always;
-      transition: transform 0.6s ease;
+    }
+
+    .scene.is-active {
+      opacity: 1;
     }
 
     .scene__bg {
-      position: absolute; inset:0;
-      width: 100%; height: 100%;
+      position: absolute;
+      top: -10%; left: -5%;
+      width: 110%; height: 120%;
       object-fit: cover;
       object-position: center;
       will-change: transform;
-      transition: transform 1.2s cubic-bezier(0.4,0,0.2,1);
-      transform: scale(1.08);
-    }
-
-    .scene.is-entering .scene__bg {
-      transform: scale(1);
     }
 
     .scene__vignette {
-      position: absolute; inset:0;
+      position: absolute; inset: 0;
       background: linear-gradient(
         to bottom,
         rgba(10,5,0,0.3) 0%,
@@ -229,7 +281,9 @@
 
     .vip-modal {
       position: fixed; inset:0; z-index:500;
-      display:flex; align-items:flex-end;
+      display:flex; align-items:center;
+      justify-content:center;
+      padding: 1rem;
       opacity:0; pointer-events:none;
       transition:opacity 0.4s;
     }
@@ -243,15 +297,30 @@
     .vip-modal__panel {
       position:relative; z-index:1;
       width:100%;
-      max-height:85vh; overflow-y:auto;
-      background:rgba(14,8,2,0.98);
+      max-height:88vh; overflow-y:auto;
+      background:rgba(14,8,2,0.96);
       border:1px solid rgba(201,162,39,0.2);
-      border-radius:20px 20px 0 0;
+      border-radius:20px;
       padding:2rem 1.5rem;
-      transform:translateY(100%);
-      transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);
+      transform:translateY(20px) scale(0.97);
+      transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
     }
-    .vip-modal.is-open .vip-modal__panel { transform:translateY(0); }
+    .vip-modal.is-open .vip-modal__panel {
+      transform:translateY(0) scale(1);
+    }
+
+    .vip-modal__panel::before {
+      content:'';
+      position:absolute; inset:0;
+      border-radius:20px;
+      background: url('img/vineyard-modal-bg.png') center/cover no-repeat;
+      opacity:0.07;
+      pointer-events:none;
+      z-index:0;
+    }
+    .vip-modal__panel > * {
+      position:relative; z-index:1;
+    }
 
     .vip-modal__logo {
       display:flex; align-items:center;
@@ -323,18 +392,262 @@
     .vip-btn:hover { background:#c9a227; color:#0e0a06; }
 
     .vip-switch__link { color:rgba(201,162,39,0.7); text-decoration:none; }
+
+button.side-nav__about {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  color: #f5ede0;
+  padding: 0;
+  text-align: left;
+  width: 100%;
+  opacity: 0.75;
+  -webkit-appearance: none;
+  appearance: none;
+}
+button.side-nav__about:hover {
+  color: var(--gold);
+  opacity: 1;
+}
+
+.about-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+}
+.about-modal.open { display: block; }
+
+.about-modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(6,5,0,0.92);
+  backdrop-filter: blur(4px);
+}
+
+.about-modal__content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 88vw;
+  max-height: 80vh;
+  background: #0f0c04;
+  border: 1px solid rgba(201,162,39,0.25);
+  border-radius: 12px;
+  overflow-y: auto;
+  padding: 36px 24px 48px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.about-modal__close {
+  position: sticky;
+  top: 0;
+  float: right;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  margin-bottom: 32px;
+  z-index: 10;
+}
+
+.about-header { margin-bottom: 32px; }
+
+.about-logo {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: 6px;
+  color: #c9a227;
+}
+.about-logo span {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 7px;
+  opacity: 0.5;
+  margin-top: 4px;
+}
+
+.about-tagline {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #f5ede0;
+  opacity: 0.5;
+  margin-top: 10px;
+}
+
+.about-divider {
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent, rgba(201,162,39,0.3), transparent);
+  margin: 32px 0;
+}
+
+.about-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px;
+  letter-spacing: 5px;
+  color: #c9a227;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 14px;
+}
+
+.about-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 28px;
+  font-weight: 300;
+  color: #f5ede0;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.about-text {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.9;
+  color: #f5ede0;
+  opacity: 0.7;
+  margin-bottom: 12px;
+}
+
+.about-person {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.about-person__photo {
+  width: 80px;
+  height: 100px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid rgba(201,162,39,0.2);
+}
+.about-person__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.about-person__name {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 20px;
+  font-weight: 300;
+  color: #f5ede0;
+  margin-bottom: 4px;
+}
+
+.about-person__role {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #c9a227;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.about-stat {
+  text-align: center;
+  padding: 16px 8px;
+  border: 1px solid rgba(201,162,39,0.15);
+}
+
+.about-stat__num {
+  display: block;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 32px;
+  font-weight: 300;
+  color: #c9a227;
+}
+
+.about-stat__label {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: #f5ede0;
+  opacity: 0.5;
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+
+.about-contact-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: #c9a227;
+  opacity: 0.7;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  margin-top: 20px;
+  display: block;
+}
+
+.about-contact-link {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: #f5ede0;
+  opacity: 0.7;
+  text-decoration: none;
+  line-height: 1.9;
+}
+
+.about-socials {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.about-social {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #f5ede0;
+  opacity: 0.6;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.about-footer-note {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px;
+  color: #f5ede0;
+  opacity: 0.2;
+  letter-spacing: 1px;
+  margin-top: 48px;
+  text-align: center;
+}
   </style>
 </head>
 <body>
 
 <header class="header">
   <a class="header__logo" href="#">
-    <svg width="28" height="28" viewBox="0 0 140 44" fill="none">
-      <path d="M16 6 Q14 6 13 8 Q11 10 12 13 Q10 13 9 15 Q8 18 10 20 Q11 28 14 33 Q16 37 20 38 Q24 37 26 33 Q29 28 30 20 Q32 18 31 15 Q30 13 28 13 Q29 10 27 8 Q26 6 24 6 Z" stroke="#c9a227" stroke-width="1.5" fill="none"/>
-      <line x1="16" y1="6" x2="24" y2="6" stroke="#c9a227" stroke-width="1.5"/>
-      <line x1="15" y1="4" x2="25" y2="4" stroke="#c9a227" stroke-width="1.5"/>
-      <path d="M12 13 Q7 14 7 19 Q7 24 12 24" stroke="#c9a227" stroke-width="1.5" fill="none"/>
-      <path d="M28 13 Q33 14 33 19 Q33 24 28 24" stroke="#c9a227" stroke-width="1.5" fill="none"/>
+    <svg width="52" height="52" viewBox="0 0 40 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M14 6 Q12 6 11 8 Q9 10 10 13 Q8 13 7 15 Q6 18 8 20 Q9 28 12 33 Q14 37 20 38 Q26 37 28 33 Q31 28 32 20 Q34 18 33 15 Q32 13 30 13 Q31 10 29 8 Q28 6 26 6 Z" stroke="#c9a227" stroke-width="1.3" fill="none"/>
+      <line x1="14" y1="6" x2="26" y2="6" stroke="#c9a227" stroke-width="1.3"/>
+      <line x1="13" y1="4" x2="27" y2="4" stroke="#c9a227" stroke-width="1.3"/>
+      <path d="M10 13 Q5 14 5 19 Q5 24 10 24" stroke="#c9a227" stroke-width="1.3" fill="none"/>
+      <path d="M30 13 Q35 14 35 19 Q35 24 30 24" stroke="#c9a227" stroke-width="1.3" fill="none"/>
     </svg>
     <div>
       <span class="header__logo-text">GETAP</span>
@@ -350,18 +663,18 @@
 
 <div class="side-nav__overlay" id="nav-overlay"></div>
 <nav class="side-nav" id="side-nav">
-  <a class="side-nav__link" href="#scene-1">История</a>
-  <a class="side-nav__link" href="#scene-2">Традиции</a>
-  <a class="side-nav__link" href="#scene-3">Коллекция</a>
-  <a class="side-nav__link" href="#scene-5">О нас</a>
+  <a class="side-nav__link" href="#" id="nav-collection">Коллекция</a>
+  <a class="side-nav__link" href="cellar.html">Погреб</a>
+  <button class="side-nav__link side-nav__about" id="about-btn-mob">О нас</button>
   <a class="side-nav__cta" href="shop.html">В магазин →</a>
 </nav>
 
-<main>
+<div class="scenes-wrap">
+  <div class="scenes-sticky">
 
   <!-- Сцена 1 -->
-  <section class="scene" id="scene-1">
-    <img class="scene__bg" src="img/bg1.png" alt="" loading="eager">
+  <section class="scene is-active" id="scene-1">
+    <img class="scene__bg" src="img/bg1.webp" alt="" loading="eager">
     <div class="scene__vignette"></div>
     <img class="scene__bottle" src="img/bottle1.png" alt=""
       data-aos="fade-left" data-aos-duration="900" data-aos-delay="300">
@@ -378,7 +691,7 @@
 
   <!-- Сцена 2 -->
   <section class="scene scene--center" id="scene-2">
-    <img class="scene__bg" src="img/wine-flow-1.png" alt="">
+    <img class="scene__bg" src="img/wine-flow-1.webp" alt="">
     <div class="scene__vignette"></div>
     <div class="scene__content"
       data-aos="fade-up" data-aos-duration="1000">
@@ -392,7 +705,7 @@
 
   <!-- Сцена 3 -->
   <section class="scene" id="scene-3">
-    <img class="scene__bg" src="img/bg2.png" alt="">
+    <img class="scene__bg" src="img/bg2.webp" alt="">
     <div class="scene__vignette"></div>
     <img class="scene__bottle" src="img/bottle2.png" alt=""
       data-aos="fade-left" data-aos-duration="900" data-aos-delay="200">
@@ -409,7 +722,7 @@
 
   <!-- Сцена 4 -->
   <section class="scene scene--center" id="scene-4">
-    <img class="scene__bg" src="img/wine-flow-2.png" alt="">
+    <img class="scene__bg" src="img/wine-flow-2.webp" alt="">
     <div class="scene__vignette"></div>
     <div class="scene__content"
       data-aos="fade-up" data-aos-duration="1000">
@@ -424,7 +737,7 @@
 
   <!-- Сцена 5 -->
   <section class="scene" id="scene-5">
-    <img class="scene__bg" src="img/table-bg.png" alt=""
+    <img class="scene__bg" src="img/table-bg.webp" alt=""
       style="object-position: center 40%">
     <div class="scene__vignette"></div>
     <img class="scene__bottle" src="img/bottle.png" alt=""
@@ -440,7 +753,8 @@
     <span class="scene-num">05 / 05</span>
   </section>
 
-</main>
+  </div>
+</div>
 
 <button class="vip-btn-fixed" id="vip-btn">♛ VIP</button>
 
@@ -504,23 +818,83 @@
       offset: 80
     })
 
-    // Параллакс-эффект при скролле между сценами
+    const wrap = document.querySelector('.scenes-wrap')
     const scenes = document.querySelectorAll('.scene')
+    const SCENE_COUNT = scenes.length
+    let currentScene = 0
+    let scrollY = 0
+    let smoothY = 0
+    const INERTIA = 0.06
 
-    const sceneObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-entering')
-          entry.target.classList.remove('is-leaving')
-        } else {
-          entry.target.classList.add('is-leaving')
-          entry.target.classList.remove('is-entering')
-        }
+    const activateScene = (idx) => {
+      scenes.forEach((s, i) => {
+        s.classList.toggle('is-active', i === idx)
       })
-    }, { threshold: 0.5 })
+      currentScene = idx
 
-    scenes.forEach(scene => sceneObserver.observe(scene))
+      // Анимация бутылки при смене сцены
+      const bottle = scenes[idx]?.querySelector('.scene__bottle')
+      const content = scenes[idx]?.querySelector('.scene__content')
 
+      if (bottle) {
+        bottle.style.transition = 'none'
+        bottle.style.transform = 'translateX(120px)'
+        bottle.style.opacity = '0'
+        setTimeout(() => {
+          bottle.style.transition = 'transform 0.9s cubic-bezier(0.34,1.56,0.64,1), opacity 0.8s ease'
+          bottle.style.transform = 'translateX(0)'
+          bottle.style.opacity = '1'
+        }, 50)
+      }
+
+      if (content) {
+        content.style.transition = 'none'
+        content.style.transform = 'translateX(-60px)'
+        content.style.opacity = '0'
+        setTimeout(() => {
+          content.style.transition = 'transform 0.8s ease, opacity 0.8s ease'
+          content.style.transform = 'translateX(0)'
+          content.style.opacity = '1'
+        }, 100)
+      }
+
+      const counter = document.querySelector('.scene-num')
+      if (counter) counter.textContent = `0${idx + 1} / 0${SCENE_COUNT}`
+    }
+
+    const tick = () => {
+      smoothY += (scrollY - smoothY) * INERTIA
+      const total = wrap.offsetHeight - window.innerHeight
+      const progress = Math.min(smoothY / total, 1)
+      const raw = progress * SCENE_COUNT
+      const idx = Math.min(Math.floor(raw), SCENE_COUNT - 1)
+      if (idx !== currentScene) activateScene(idx)
+
+      const bg = scenes[idx]?.querySelector('.scene__bg')
+      if (bg) {
+        const lp = raw - Math.floor(raw)
+        bg.style.transform = `translateX(${-6 + lp * 12}%) scale(1.08)`
+      }
+
+      requestAnimationFrame(tick)
+    }
+
+    window.addEventListener('scroll', () => {
+      scrollY = Math.max(0, -wrap.getBoundingClientRect().top)
+    }, { passive: true })
+
+    activateScene(0)
+    tick()
+
+    const navCollection = document.getElementById('nav-collection');
+    if (navCollection) {
+      navCollection.addEventListener('click', (e) => {
+        e.preventDefault();
+        const total = wrap.offsetHeight - window.innerHeight;
+        window.scrollTo({ top: total, behavior: 'smooth' });
+        closeNav();
+      });
+    }
 
     // Бургер
     const burger = document.getElementById('burger')
@@ -595,8 +969,161 @@
       })
     }
 
+  const aboutModal = document.getElementById('about-modal');
+  const aboutOverlay = document.getElementById('about-overlay');
+  const aboutClose = document.getElementById('about-close');
+  const aboutBtnMob = document.getElementById('about-btn-mob');
+
+  const openAbout = () => {
+    sideNav.classList.remove('is-open');
+    overlay.classList.remove('is-open');
+    document.body.style.overflow = 'hidden';
+    aboutModal.classList.add('open');
+  };
+
+  const closeAbout = () => {
+    aboutModal.classList.remove('open');
+    document.body.style.overflow = '';
+  };
+
+  if (aboutBtnMob) aboutBtnMob.addEventListener('click', openAbout);
+  if (aboutClose) aboutClose.addEventListener('click', closeAbout);
+  if (aboutOverlay) aboutOverlay.addEventListener('click', closeAbout);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeAbout();
+  });
+
+  const navCollection = document.getElementById('nav-collection');
+  if (navCollection) {
+    navCollection.addEventListener('click', (e) => {
+      e.preventDefault();
+      const total = wrap.offsetHeight - window.innerHeight;
+      window.scrollTo({ top: total, behavior: 'smooth' });
+      closeNav();
+    });
+  }
+
   })
 </script>
+
+<div class="about-modal" id="about-modal">
+  <div class="about-modal__overlay" id="about-overlay"></div>
+  <div class="about-modal__content">
+
+    <button class="about-modal__close" id="about-close">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M18 6L6 18M6 6l12 12" stroke="#c9a227"
+        stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+
+    <div class="about-header">
+      <div class="about-logo">GETAP<span>WINERY</span></div>
+      <p class="about-tagline">Вина Геленджика · Основана в 2018</p>
+    </div>
+
+    <div class="about-divider"></div>
+
+    <section>
+      <span class="about-label">История</span>
+      <h2 class="about-title">Там, где горы встречают море</h2>
+      <p class="about-text">GETAP WINERY — семейная винодельня
+      на черноморском побережье Кавказа. Высота 400 метров,
+      вулканическая почва, морской бриз — терруар, который
+      невозможно воспроизвести нигде в мире.</p>
+      <p class="about-text">Каждая лоза выращена вручную.
+      Каждый урожай — событие.</p>
+    </section>
+
+    <div class="about-divider"></div>
+
+    <section>
+      <span class="about-label">Команда</span>
+      <div class="about-person">
+        <div class="about-person__photo">
+          <img src="img/sommelier.png" alt="Арам Геворкян">
+        </div>
+        <div>
+          <h3 class="about-person__name">Арам Геворкян</h3>
+          <p class="about-person__role">Главный винодел</p>
+          <p class="about-text">18 лет в виноделии. Стажировка
+          в Бордо и Бургундии. Автор Grand Cru 2020.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="about-divider"></div>
+
+    <section>
+      <span class="about-label">Производство</span>
+      <div class="about-stats">
+        <div class="about-stat">
+          <span class="about-stat__num">2018</span>
+          <span class="about-stat__label">Основана</span>
+        </div>
+        <div class="about-stat">
+          <span class="about-stat__num">180</span>
+          <span class="about-stat__label">Бочек</span>
+        </div>
+        <div class="about-stat">
+          <span class="about-stat__num">1200</span>
+          <span class="about-stat__label">Бутылок GC</span>
+        </div>
+        <div class="about-stat">
+          <span class="about-stat__num">40+</span>
+          <span class="about-stat__label">Стран</span>
+        </div>
+      </div>
+      <p class="about-text">ООО «ГЕТАП ВАЙНЕРИ» · ИНН 2304087412<br>
+      Лицензия № РА-7/2018<br>
+      Геленджик, ул. Виноградная, 12</p>
+    </section>
+
+    <div class="about-divider"></div>
+
+    <section>
+      <span class="about-label">Контакты</span>
+
+      <span class="about-contact-label">Отдел продаж</span>
+      <a href="tel:+78002000000" class="about-contact-link">
+      +7 800 200-00-00</a>
+      <a href="mailto:sales@getap.ru" class="about-contact-link">
+      sales@getap.ru</a>
+
+      <span class="about-contact-label">Маркетинг и PR</span>
+      <a href="mailto:pr@getap.ru" class="about-contact-link">
+      pr@getap.ru</a>
+
+      <span class="about-contact-label">Отдел закупок</span>
+      <a href="mailto:buy@getap.ru" class="about-contact-link">
+      buy@getap.ru</a>
+
+      <span class="about-contact-label">Головной офис</span>
+      <p class="about-text">Москва, Пресненская наб., 8с1<br>
+      Москва-Сити, башня Меркурий</p>
+
+      <span class="about-contact-label">Доставка</span>
+      <p class="about-text">По всей России и 40+ странам.<br>
+      РФ: 3-7 дней · Мир: 7-21 день</p>
+
+      <div class="about-socials">
+        <a href="https://t.me/getapwinery"
+        class="about-social" target="_blank">Telegram</a>
+        <span style="color:#c9a227;opacity:.3">·</span>
+        <a href="https://instagram.com/getapwinery"
+        class="about-social" target="_blank">Instagram</a>
+        <span style="color:#c9a227;opacity:.3">·</span>
+        <a href="https://wa.me/78002000000"
+        class="about-social" target="_blank">WhatsApp</a>
+      </div>
+    </section>
+
+    <p class="about-footer-note">
+      Чрезмерное употребление алкоголя вредит вашему здоровью
+    </p>
+
+  </div>
+</div>
 
 </body>
 </html>
