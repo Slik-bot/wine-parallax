@@ -824,7 +824,7 @@ button.side-nav__about:hover {
     let currentScene = 0
     let scrollY = 0
     let smoothY = 0
-    const INERTIA = 0.06
+    const INERTIA = 0.12
 
     const activateScene = (idx) => {
       scenes.forEach((s, i) => {
@@ -862,9 +862,10 @@ button.side-nav__about:hover {
       if (counter) counter.textContent = `0${idx + 1} / 0${SCENE_COUNT}`
     }
 
+    const fixedVH = window.innerHeight
     const tick = () => {
       smoothY += (scrollY - smoothY) * INERTIA
-      const total = wrap.offsetHeight - window.innerHeight
+      const total = wrap.offsetHeight - fixedVH
       const progress = Math.min(smoothY / total, 1)
       const raw = progress * SCENE_COUNT
       const idx = Math.min(Math.floor(raw), SCENE_COUNT - 1)
@@ -992,16 +993,6 @@ button.side-nav__about:hover {
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeAbout();
   });
-
-  const navCollection = document.getElementById('nav-collection');
-  if (navCollection) {
-    navCollection.addEventListener('click', (e) => {
-      e.preventDefault();
-      const total = wrap.offsetHeight - window.innerHeight;
-      window.scrollTo({ top: total, behavior: 'smooth' });
-      closeNav();
-    });
-  }
 
   })
 </script>
