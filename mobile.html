@@ -17,9 +17,9 @@
 
     * { margin:0; padding:0; box-sizing:border-box; }
     html {
-      scroll-behavior: smooth;
+      scroll-behavior: auto;
     }
-    body { background: var(--bg); color: var(--cream); font-family: 'Cormorant Garamond', Georgia, serif; overflow-x: hidden; overflow-y: scroll; }
+    body { background: var(--bg); color: var(--cream); font-family: 'Cormorant Garamond', Georgia, serif; overflow-x: hidden; overflow-y: scroll; touch-action: pan-y; }
 
     /* HEADER */
     .header {
@@ -146,7 +146,7 @@
     .scenes-sticky {
       position: sticky;
       top: 0;
-      height: 100vh;
+      height: 100dvh;
       overflow: hidden;
     }
 
